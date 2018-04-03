@@ -75,7 +75,139 @@ app.router()：指定路由，需要传入一个函数，一般类似于({histor
 app.use():添加插件；
 app.model():添加model，也就是对应的添加一个store下的数据，该方法做的就是对传入的model进行检查，对reducers添加命名空间，而后将其push到_models中
 app.start():初始化应用，接受参数为选择器或者dom节点
+需要注意的是： 
+- reducers和effects的key不需要用namespace/action的形式了，因为dva会自动将其加上，dispatch的时候，saga需要加上namespace，而saga中的put不需要加入namespace，原因是dva对put进行了重载
 
+
+### start函数 ###
+    function start(container) {
+    // 允许 container 是字符串，然后用 querySelector 找元素
+    	if (isString(container)) {
+      		container = document.querySelector(container);
+      		invariant(
+        	  container,
+        	`[app.start] container ${container} not found`,
+      		);
+    	}
+
+    // 并且是 HTMLElement
+    	invariant(
+      		!container || isHTMLElement(container),
+      		`[app.start] container should be HTMLElement`,
+    	);
+
+    // 路由必须提前注册
+    	invariant(
+      		app._router,
+      		`[app.start] router must be registered before app.start()`,
+    	);
+
+    	if (!app._store) {
+      		oldAppStart.call(app);
+    	}
+    	const store = app._store;
+
+    // export _getProvider for HMR
+    // ref: https://github.com/dvajs/dva/issues/469
+    	app._getProvider = getProvider.bind(null, store, app);
+
+    // If has container, render; else, return react component
+    	**if (container) {
+      		render(container, store, app, app._router);
+      		app._plugin.apply('onHmr')(render.bind(null, container, store, app));
+    	} else {
+      	return getProvider(store, this, this._router);
+    	}**
+  	}
+
+比较关心的页面初始渲染的函数
+    
+	function render(container, store, app, router) {
+  		const ReactDOM = require('react-dom');  // eslint-disable-line
+  		ReactDOM.render(React.createElement(getProvider(store, app, router)), container);
+	}
+
+比较重要的路由模块
+  `function getProvider(store, app, router) {
+  		return extraProps => (
+    	<Provider store={store}>
+      	{ router({ app, history: app._history, ...extraProps }) }
+    	</Provider>
+  	)；
+	}`
+
+此时建议看一下一般项目中的入口文件index.js和路由文件router.js
+
+index.js
+   	
+	`// 1. Initialize
+		const app = dva({
+  			history: browserHistory(),
+		});
+	// 2. Plugins
+	// app.use({});
+
+	// 3. Register global model
+	app.model(require('./models/global'));
+
+	// 4. Router
+	app.router(router);
+
+	// 5. Start
+	app.start('#root');
+
+	export const store = app._store;`
+
+router.js
+
+    `function RouterConfig({ history, app }) {
+  		const navData = getNavData(app);
+  		const BasicLayout = getLayout(navData, 'BasicLayout').component;
+
+  		const passProps = {
+    		app,
+    		navData,
+    		getRouteData: (path) => {
+      		return getRouteData(navData, path);
+    		},
+  		};
+
+  		return (
+    		<LocaleProvider locale={zhCN}>
+      			<Router history={history}>
+        			<Switch>
+          				<Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />
+        			</Switch>
+      			</Router>
+    		</LocaleProvider>
+  			);
+	}
+
+	export default RouterConfig;`
+
+以上可以基本明白一个dva的初始化页面是如何实现的，需要注意的是：
+1、LocaleProvider是antd提供的国际化组件
+2、Provider是react-redux提供的组件，其本质是一个react组件，具体参看源码，其核心是getChildContext方法
+ 
+	`import { Component, Children } from 'react'
+	 import PropTypes from 'prop-types'
+	 import storeShape from '../utils/storeShape'
+	 import warning from '../utils/warning'
+
+	export default class Provider extends Component {
+  		getChildContext() {
+    	return { store: this.store }
+  	}
+
+  	constructor(props, context) {
+    	super(props, context)
+    	this.store = props.store
+  	}
+
+  	render() {
+    	return Children.only(this.props.children)
+  		}
+	}`
 
 
 
