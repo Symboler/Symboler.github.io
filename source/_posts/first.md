@@ -208,7 +208,249 @@ router.js
     	return Children.only(this.props.children)
   		}
 	}`
+接下来是dva的核心部分，就是如何完成状态管理，必须看明白model的作用
 
+	` /**
+   	* Register model before app is started.
+   	*
+   	* @param m {Object} model to register
+   	*/
+  	function model(m) {
+		//开发模式下，需要对model的格式进行检查
+    	if (process.env.NODE_ENV !== 'production') {
+      	checkModel(m, app._models);
+    	}
+		//通过model方法将model注入_models属性，把 reducer, initialState, action, saga 封装到一起
+   	 app._models.push(prefixNamespace(m));
+  	}`
+
+    `function prefix(obj, namespace, type) {
+  		return Object.keys(obj).reduce((memo, key) => {
+    		warning(
+      		key.indexOf(`${namespace}${NAMESPACE_SEP}`) !== 0,
+      		`[prefixNamespace]: ${type} ${key} should not be prefixed with namespace ${namespace}`,
+    		);
+    		const newKey = `${namespace}${NAMESPACE_SEP}${key}`;
+    		memo[newKey] = obj[key];
+    		return memo;
+  		}, {});
+	}
+
+	export default function prefixNamespace(model) {
+  		const {
+    		namespace,
+    		reducers,
+    		effects,
+  		} = model;
+
+  	if (reducers) {
+    	if (isArray(reducers)) {
+      		model.reducers[0] = prefix(reducers[0], namespace, 'reducer');
+    	} else {
+      		model.reducers = prefix(reducers, namespace, 'reducer');
+    	}
+  	}
+  	if (effects) {
+    	model.effects = prefix(effects, namespace, 'effect');
+  	}
+  	return model;
+	}
+	import warning from 'warning';
+	import { isArray } from './utils';//const isArray = Array.isArray.bind(Array);
+	import { NAMESPACE_SEP } from './constants';//const NAMESPACE_SEP = '/';
+
+	function prefix(obj, namespace, type) {
+  		return Object.keys(obj).reduce((memo, key) => {
+    		warning(
+      		key.indexOf(`${namespace}${NAMESPACE_SEP}`) !== 0,
+      		`[prefixNamespace]: ${type} ${key} should not be prefixed with namespace ${namespace}`,
+    	);
+    	const newKey = `${namespace}${NAMESPACE_SEP}${key}`;
+    	memo[newKey] = obj[key];
+    	return memo;
+  	}, {});
+	}
+
+	export default function prefixNamespace(model) {
+  		const {
+    		namespace,
+    		reducers,
+    		effects,
+  		} = model;
+
+  		if (reducers) {
+		//此处是将所有的reducers和effects添加为完整路径，前面加上"namespace/**"
+    		if (isArray(reducers)) {
+      		model.reducers[0] = prefix(reducers[0], namespace, 'reducer');
+    		} else {
+      		model.reducers = prefix(reducers, namespace, 'reducer');
+    		}
+  		}
+  		if (effects) {
+    		model.effects = prefix(effects, namespace, 'effect');
+  		}
+  		return model;
+	}`
+
+此处可结合model的实例进行分析：
+
+	`import { queryNotices } from 'Services/notices';
+	 import { getWebCig } from 'Services/global';
+	 import { webCig, headerMenu } from '../common/constants/initState.js';
+
+	 export default {
+  		namespace: 'global',
+
+  		state: {
+    		notices: [],
+    		fetchingNotices: false,
+    		webCig,
+    		headerMenu: headerMenu,
+  		},
+
+  		effects: {
+    		*fetchNotices({ query }, { call, put }) {
+      			yield put({
+        			type: 'changeNoticeLoading',
+        			payload: true,
+      			});
+      			const res = yield call(queryNotices, query);
+      			yield put({
+        			type: 'saveNotices',
+        			payload: res.data.list,
+      			});
+    		},
+    		*clearNotices({ payload }, { put, select }) {
+      			const count = yield select(state => state.global.notices.length);
+      			yield put({
+        			type: 'user/changeNotifyCount',
+        			payload: count,
+      			});
+
+      			yield put({
+        			type: 'saveClearedNotices',
+        			payload,
+      			});
+    		},
+    		*fetchWebCig(_, { call, put }) {
+      			try {
+        			const res = yield call(getWebCig);
+        			if (res.status === 'success') {
+          				yield put({
+            				type: 'saveWebCig',
+            				payload: res.data,
+          				});
+        			}
+      			} catch(e) {
+
+      			}
+    		},
+  	},
+
+  	reducers: {
+    	saveNotices(state, { payload }) {
+      	return {
+        	...state,
+        	notices: payload,
+        	fetchingNotices: false,
+      	};
+    	},
+    	saveClearedNotices(state, { payload }) {
+      	return {
+        	...state,
+        	notices: state.notices.filter(item => item.type !== payload),
+      	};
+    	},
+    	changeNoticeLoading(state, { payload }) {
+      	return {
+        	...state,
+        	fetchingNotices: payload,
+      	};
+    	},
+    	cleanNotices(state, _) {
+      	return {
+        	...state,
+        	notices: [],
+      	};
+    	},
+    	saveWebCig(state, { payload }) {
+      	return {
+        	...state,
+        	webCig: payload,
+      	};
+    	},
+  	},
+
+  	subscriptions: {
+    	setup({ history }) {
+      	// Subscribe history(url) change, trigger `load` action if pathname is `/`
+      	return history.listen(({ pathname, search }) => {
+        	if (typeof window.ga !== 'undefined') {
+          		window.ga('send', 'pageview', pathname + search);
+        	}
+      	});
+    	},
+  	},
+	};`
+
+关注一下dva里面的store来源
+
+	`const store = app._store = createStore({ // eslint-disable-line
+      		reducers: createReducer(),
+      		initialState: hooksAndOpts.initialState || {},
+      		plugin,
+      		createOpts,
+      		sagaMiddleware,
+      		promiseMiddleware,
+    	});
+	这里的createStore是对redux的createStore方法进行了扩展封装
+	import { createStore, applyMiddleware, compose } from 'redux';
+	import flatten from 'flatten';
+	import invariant from 'invariant';
+	import window from 'global/window';
+	import { returnSelf, isArray } from './utils';
+
+	export default function ({
+  	reducers,
+  	initialState,
+  	plugin,
+  	sagaMiddleware,
+  	promiseMiddleware,
+  	createOpts: {
+    	setupMiddlewares = returnSelf,
+  	},
+	}) {
+  		// extra enhancers
+  		const extraEnhancers = plugin.get('extraEnhancers');
+  		invariant(
+    		isArray(extraEnhancers),
+    		`[app.start] extraEnhancers should be array, but got ${typeof extraEnhancers}`,
+  		);
+
+  	const extraMiddlewares = plugin.get('onAction');
+  	const middlewares = setupMiddlewares([
+    	sagaMiddleware,
+    	promiseMiddleware,
+    	...flatten(extraMiddlewares),
+  	]);
+
+  	let devtools = () => noop => noop;
+  	if (process.env.NODE_ENV !== 'production' && 	window.__REDUX_DEVTOOLS_EXTENSION__) {
+    	devtools = window.__REDUX_DEVTOOLS_EXTENSION__;
+  	}
+
+  	const enhancers = [
+    	applyMiddleware(...middlewares),
+    	...extraEnhancers,
+    	devtools(window.__REDUX_DEVTOOLS_EXTENSION__OPTIONS),
+  	];
+
+  	return createStore(reducers, initialState, compose(...enhancers));
+	}`
+
+关于redux的部分可以深入了解https://zhuanlan.zhihu.com/p/22809799，http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html 我们这里不再展开
+
+flux———redux————react-redux————sage————dva
 
 
 
