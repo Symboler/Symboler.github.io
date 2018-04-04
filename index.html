@@ -50,7 +50,7 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Søk"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -260,7 +260,243 @@ export default class Provider extends Component {
     return Children.only(this.props.children)
       }
 }`
-</code></pre>
+</code></pre><p>接下来是dva的核心部分，就是如何完成状态管理，必须看明白model的作用</p>
+<pre><code>` /**
+   * Register model before app is started.
+   *
+   * @param m {Object} model to register
+   */
+  function model(m) {
+    //开发模式下，需要对model的格式进行检查
+    if (process.env.NODE_ENV !== &apos;production&apos;) {
+      checkModel(m, app._models);
+    }
+    //通过model方法将model注入_models属性，把 reducer, initialState, action, saga 封装到一起
+    app._models.push(prefixNamespace(m));
+  }`
+
+`function prefix(obj, namespace, type) {
+      return Object.keys(obj).reduce((memo, key) =&gt; {
+        warning(
+          key.indexOf(`${namespace}${NAMESPACE_SEP}`) !== 0,
+          `[prefixNamespace]: ${type} ${key} should not be prefixed with namespace ${namespace}`,
+        );
+        const newKey = `${namespace}${NAMESPACE_SEP}${key}`;
+        memo[newKey] = obj[key];
+        return memo;
+      }, {});
+}
+
+export default function prefixNamespace(model) {
+      const {
+        namespace,
+        reducers,
+        effects,
+      } = model;
+
+  if (reducers) {
+    if (isArray(reducers)) {
+          model.reducers[0] = prefix(reducers[0], namespace, &apos;reducer&apos;);
+    } else {
+          model.reducers = prefix(reducers, namespace, &apos;reducer&apos;);
+    }
+  }
+  if (effects) {
+    model.effects = prefix(effects, namespace, &apos;effect&apos;);
+  }
+  return model;
+}
+import warning from &apos;warning&apos;;
+import { isArray } from &apos;./utils&apos;;//const isArray = Array.isArray.bind(Array);
+import { NAMESPACE_SEP } from &apos;./constants&apos;;//const NAMESPACE_SEP = &apos;/&apos;;
+
+function prefix(obj, namespace, type) {
+      return Object.keys(obj).reduce((memo, key) =&gt; {
+        warning(
+          key.indexOf(`${namespace}${NAMESPACE_SEP}`) !== 0,
+          `[prefixNamespace]: ${type} ${key} should not be prefixed with namespace ${namespace}`,
+    );
+    const newKey = `${namespace}${NAMESPACE_SEP}${key}`;
+    memo[newKey] = obj[key];
+    return memo;
+  }, {});
+}
+
+export default function prefixNamespace(model) {
+      const {
+        namespace,
+        reducers,
+        effects,
+      } = model;
+
+      if (reducers) {
+    //此处是将所有的reducers和effects添加为完整路径，前面加上&quot;namespace/**&quot;
+        if (isArray(reducers)) {
+          model.reducers[0] = prefix(reducers[0], namespace, &apos;reducer&apos;);
+        } else {
+          model.reducers = prefix(reducers, namespace, &apos;reducer&apos;);
+        }
+      }
+      if (effects) {
+        model.effects = prefix(effects, namespace, &apos;effect&apos;);
+      }
+      return model;
+}`
+</code></pre><p>此处可结合model的实例进行分析：</p>
+<pre><code>`import { queryNotices } from &apos;Services/notices&apos;;
+ import { getWebCig } from &apos;Services/global&apos;;
+ import { webCig, headerMenu } from &apos;../common/constants/initState.js&apos;;
+
+ export default {
+      namespace: &apos;global&apos;,
+
+      state: {
+        notices: [],
+        fetchingNotices: false,
+        webCig,
+        headerMenu: headerMenu,
+      },
+
+      effects: {
+        *fetchNotices({ query }, { call, put }) {
+              yield put({
+                type: &apos;changeNoticeLoading&apos;,
+                payload: true,
+              });
+              const res = yield call(queryNotices, query);
+              yield put({
+                type: &apos;saveNotices&apos;,
+                payload: res.data.list,
+              });
+        },
+        *clearNotices({ payload }, { put, select }) {
+              const count = yield select(state =&gt; state.global.notices.length);
+              yield put({
+                type: &apos;user/changeNotifyCount&apos;,
+                payload: count,
+              });
+
+              yield put({
+                type: &apos;saveClearedNotices&apos;,
+                payload,
+              });
+        },
+        *fetchWebCig(_, { call, put }) {
+              try {
+                const res = yield call(getWebCig);
+                if (res.status === &apos;success&apos;) {
+                      yield put({
+                        type: &apos;saveWebCig&apos;,
+                        payload: res.data,
+                      });
+                }
+              } catch(e) {
+
+              }
+        },
+  },
+
+  reducers: {
+    saveNotices(state, { payload }) {
+      return {
+        ...state,
+        notices: payload,
+        fetchingNotices: false,
+      };
+    },
+    saveClearedNotices(state, { payload }) {
+      return {
+        ...state,
+        notices: state.notices.filter(item =&gt; item.type !== payload),
+      };
+    },
+    changeNoticeLoading(state, { payload }) {
+      return {
+        ...state,
+        fetchingNotices: payload,
+      };
+    },
+    cleanNotices(state, _) {
+      return {
+        ...state,
+        notices: [],
+      };
+    },
+    saveWebCig(state, { payload }) {
+      return {
+        ...state,
+        webCig: payload,
+      };
+    },
+  },
+
+  subscriptions: {
+    setup({ history }) {
+      // Subscribe history(url) change, trigger `load` action if pathname is `/`
+      return history.listen(({ pathname, search }) =&gt; {
+        if (typeof window.ga !== &apos;undefined&apos;) {
+              window.ga(&apos;send&apos;, &apos;pageview&apos;, pathname + search);
+        }
+      });
+    },
+  },
+};`
+</code></pre><p>关注一下dva里面的store来源</p>
+<pre><code>`const store = app._store = createStore({ // eslint-disable-line
+          reducers: createReducer(),
+          initialState: hooksAndOpts.initialState || {},
+          plugin,
+          createOpts,
+          sagaMiddleware,
+          promiseMiddleware,
+    });
+这里的createStore是对redux的createStore方法进行了扩展封装
+import { createStore, applyMiddleware, compose } from &apos;redux&apos;;
+import flatten from &apos;flatten&apos;;
+import invariant from &apos;invariant&apos;;
+import window from &apos;global/window&apos;;
+import { returnSelf, isArray } from &apos;./utils&apos;;
+
+export default function ({
+  reducers,
+  initialState,
+  plugin,
+  sagaMiddleware,
+  promiseMiddleware,
+  createOpts: {
+    setupMiddlewares = returnSelf,
+  },
+}) {
+      // extra enhancers
+      const extraEnhancers = plugin.get(&apos;extraEnhancers&apos;);
+      invariant(
+        isArray(extraEnhancers),
+        `[app.start] extraEnhancers should be array, but got ${typeof extraEnhancers}`,
+      );
+
+  const extraMiddlewares = plugin.get(&apos;onAction&apos;);
+  const middlewares = setupMiddlewares([
+    sagaMiddleware,
+    promiseMiddleware,
+    ...flatten(extraMiddlewares),
+  ]);
+
+  let devtools = () =&gt; noop =&gt; noop;
+  if (process.env.NODE_ENV !== &apos;production&apos; &amp;&amp;     window.__REDUX_DEVTOOLS_EXTENSION__) {
+    devtools = window.__REDUX_DEVTOOLS_EXTENSION__;
+  }
+
+  const enhancers = [
+    applyMiddleware(...middlewares),
+    ...extraEnhancers,
+    devtools(window.__REDUX_DEVTOOLS_EXTENSION__OPTIONS),
+  ];
+
+  return createStore(reducers, initialState, compose(...enhancers));
+}`
+</code></pre><p>关于redux的部分可以深入了解<a href="https://zhuanlan.zhihu.com/p/22809799，http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/22809799，http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html</a> 我们这里不再展开</p>
+<p>flux———redux————react-redux————sage————dva</p>
+
       
     </div>
     <footer class="article-footer">
@@ -334,7 +570,7 @@ export default class Provider extends Component {
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Arkiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li></ul>
     </div>
@@ -344,7 +580,7 @@ export default class Provider extends Component {
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Siste innlegg</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
