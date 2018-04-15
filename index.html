@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hexo</title>
+  <title>❤️ MM ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="❤️ MM ❤️">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="❤️ MM ❤️">
+<meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="❤️ MM ❤️">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="❤️ MM ❤️" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -33,7 +34,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">❤️ MM ❤️</a>
       </h1>
       
     </div>
@@ -60,6 +61,102 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-js-kuayu" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/15/js-kuayu/" class="article-date">
+  <time datetime="2018-04-15T05:05:56.000Z" itemprop="datePublished">2018-04-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/15/js-kuayu/">ajax跨域</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="什么是跨域"><a href="#什么是跨域" class="headerlink" title="什么是跨域"></a>什么是跨域</h1><p>前台在调用后台服务接口的时候，接口不是同一个域的时候，请求就会失败。</p>
+<h1 id="产生跨域的原因"><a href="#产生跨域的原因" class="headerlink" title="产生跨域的原因"></a>产生跨域的原因</h1><p>1、浏览器限制<br>2、域名不同<br>3、请求类型是xhr</p>
+<h1 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h1><h2 id="解除浏览器限制"><a href="#解除浏览器限制" class="headerlink" title="解除浏览器限制"></a>解除浏览器限制</h2><p>通过指定参数让浏览器不去校验，但是价值不大，因为这种需要对每个客户端进行处理</p>
+<h2 id="修改请求类型，保证发出的不是xhr"><a href="#修改请求类型，保证发出的不是xhr" class="headerlink" title="修改请求类型，保证发出的不是xhr"></a>修改请求类型，保证发出的不是xhr</h2><p>典型解决办法：jsonp；jsonp有很多弊端，所以现在使用较少<br>jsonp：通过插入script标签，请求获取回来一段js代码，最后执行回调函数来得到返回值<br>jsonp的缺点：1、服务器需要改动代码支持</p>
+<p>2、只支持get请求，无法满足需求；<br>3、发送的不是xhr请求，xhr有很多新的特性，异步、各种事件。</p>
+<h2 id="域名不同"><a href="#域名不同" class="headerlink" title="域名不同"></a>域名不同</h2><p>解决办法，支持跨域：被调用方调整，通过后端处理满足跨域需求，这样就可以实现支持跨域；调用方修改，通过代理的方式，实现隐藏跨域的效果。<br>这是最理想的解决方案<br>最常见javaee架构<br><img src="http://lxlimg.gz.bcebos.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202018-04-15%20%E4%B8%8B%E5%8D%881.34.59.png" alt="屏幕快照 2018-04-15 下午1.34.59.png"></p>
+<p>调用方解决跨域：请求从http服务器发出；原理是是从中间的http服务器转发过去的请求。<br>反向代理：访问同一域名两个url，最后会去到两个不同的服务器</p>
+<p>被调用方解决跨域：请求从客户端发出，在被调用方那边进行设置，允许接口被调用。<br>原理是基于http协议关于跨域的一些规定，在响应头上加上一些字段（http服务器或者应用服务器中增加），告诉浏览器允许跨域<br>具体实现方式：1、服务器端实现<br>跨域请求头会多一个origin当前域的字段<br>access-control-allow-origin<br>access-control-allow-methods<br>access-control-allow-contentType</p>
+<h3 id="简单请求和非简单请求"><a href="#简单请求和非简单请求" class="headerlink" title="简单请求和非简单请求"></a>简单请求和非简单请求</h3><p>是不是所有请求都是先请求后判断呢？<br>如果是简单请求，是先请求后判断<br>如果是非简单请求，会先发一个预检命令，通过后才会发出请求<br>简单请求：方法为get、head、post；请求头里无自定义头，content-type为以下几种<br>text/plain；multipart/form-data；application/x-www-form-urlencoded；</p>
+<p>非简单请求：put、delete，发送json格式的ajax请求，带自定义头的ajax请求<br>由于预检命令导致跨域的非简单请求，每次会发出两条请求，解决办法，<br>预检命令的缓存：加响应头，access-control-max-age 参数是一个数字秒数，告诉浏览器在这个时间内可以缓存预检命令</p>
+<h3 id="带cookie的跨域"><a href="#带cookie的跨域" class="headerlink" title="带cookie的跨域"></a>带cookie的跨域</h3><p>access-control-allow-origin：*能否满足所有的跨域呢？<br>不能满足带cookie的跨域请求，必须设置为cookie对应的域名<br>且需要加access-control-allow-credentials：true<br>那如何设置多个带cookie的跨域呢？<br>办法：后台动态获取请求头中的origin，然后传入access-control-allow-origin字段</p>
+<h3 id="带自定义头的跨域"><a href="#带自定义头的跨域" class="headerlink" title="带自定义头的跨域"></a>带自定义头的跨域</h3><p>需要在响应头中设置对应access-control-allow-Headers</p>
+<p>2、nginx配置<br>被调用方nginx的设置，让请求先发送到http服务器，再转至应用服务器</p>
+<p>3、apache配置<br>同nginx<br>4、spring框架的解决方案<br>配置crossoigin</p>
+<p>两者都可能是对http服务器进行设置，但思路是不一样的<br>第一种是修改调用方的http服务器，第二种是修改被调用方的http服务器。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjg0ckuow0001yd8980y2xngw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/22/hello-world/" class="article-date">
+  <time datetime="2018-03-22T12:33:13.000Z" itemprop="datePublished">2018-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/22/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/22/hello-world/" data-id="cjg0ckup00002yd895vg1q9m7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-first" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -500,52 +597,7 @@ export default function ({
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjf86gump0000rcvwqttarc8z" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/03/22/hello-world/" class="article-date">
-  <time datetime="2018-03-22T03:29:44.239Z" itemprop="datePublished">2018-03-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/22/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/hello-world/" data-id="cjf86gumv0001rcvwma3giqj8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjg0ckuoq0000yd89s2zqudv6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -572,7 +624,7 @@ export default function ({
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li></ul>
     </div>
   </div>
 
@@ -585,11 +637,15 @@ export default function ({
       <ul>
         
           <li>
-            <a href="/2018/03/22/first/">dva的基本使用以及核心源码分析</a>
+            <a href="/2018/04/15/js-kuayu/">ajax跨域</a>
           </li>
         
           <li>
             <a href="/2018/03/22/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/22/first/">dva的基本使用以及核心源码分析</a>
           </li>
         
       </ul>
@@ -604,7 +660,7 @@ export default function ({
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 <br>
+      &copy; 2018 Symboler<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
