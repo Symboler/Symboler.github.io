@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>阿里2018面试题总结 | ❤️ M青阳玄英M ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用css实现一个持续的动画效果 主要考察animation的用法 ` animation:mymove 5s infinite; @keyframe mymove { from {top:0;} to{top:200px;}   }` 使用js实现一个持续的动画效果使用requestAnimationFrame`    //兼容性处理 window.requestAnimFrame = (fun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里2018面试题总结">
+<meta property="og:url" content="http://yoursite.com/2018/04/17/alipay-questiones/index.html">
+<meta property="og:site_name" content="❤️ M青阳玄英M ❤️">
+<meta property="og:description" content="使用css实现一个持续的动画效果 主要考察animation的用法 ` animation:mymove 5s infinite; @keyframe mymove { from {top:0;} to{top:200px;}   }` 使用js实现一个持续的动画效果使用requestAnimationFrame`    //兼容性处理 window.requestAnimFrame = (fun">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-04-17T12:26:28.755Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="阿里2018面试题总结">
+<meta name="twitter:description" content="使用css实现一个持续的动画效果 主要考察animation的用法 ` animation:mymove 5s infinite; @keyframe mymove { from {top:0;} to{top:200px;}   }` 使用js实现一个持续的动画效果使用requestAnimationFrame`    //兼容性处理 window.requestAnimFrame = (fun">
+  
+    <link rel="alternate" href="/atom.xml" title="❤️ M青阳玄英M ❤️" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">❤️ M青阳玄英M ❤️</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-alipay-questiones" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/17/alipay-questiones/" class="article-date">
+  <time datetime="2018-04-17T12:18:46.000Z" itemprop="datePublished">2018-04-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      阿里2018面试题总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="使用css实现一个持续的动画效果"><a href="#使用css实现一个持续的动画效果" class="headerlink" title="使用css实现一个持续的动画效果"></a>使用css实现一个持续的动画效果</h2><p> 主要考察animation的用法</p>
+<p>` animation:mymove 5s infinite;</p>
+<pre><code>@keyframe mymove {
+from {top:0;}
+to{top:200px;}
+</code></pre><p>  }<br>`</p>
+<h2 id="使用js实现一个持续的动画效果"><a href="#使用js实现一个持续的动画效果" class="headerlink" title="使用js实现一个持续的动画效果"></a>使用js实现一个持续的动画效果</h2><p>使用requestAnimationFrame<br>`<br>    //兼容性处理</p>
+<pre><code>window.requestAnimFrame = (function(){
+  return window.requestAnimationFrame
+    window.webkitRequestAnimationFrame
+    window.mozRequestAnimationFrame
+    function(callback){
+      window.setTimeout(callback,1000/60)
+    }
+})()
+var e = document.getElementById(&quot;e&quot;)
+var flag = true;
+var left = 0;
+function render(){
+  left ==0?flag=true:left==100?flag=false:&apos;&apos;;
+  flag?e.style.left=`${left++}px`;
+    e.style.left =  `${left--}px`;
+}
+(function animloop(){
+  render();
+  requestAnimFrame(animloop);
+})()
+</code></pre><p>  `<br>  浏览器可以优化并行的动画动作，更合理的重新排列动作序列，并把能够合并的动作放在一个渲染周期内完成，从而呈现出更流畅的动画效果<br>  解决毫秒的不准确性<br>  避免过度渲染（渲染频率太高、tab不可见暂停等等）<br>  注：requestFrame和定时器一样也有一个类似的清除方法cancelAnimationFrame</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/17/alipay-questiones/" data-id="cjg3mxatt00001r89wgxskm4t" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/04/15/js-kuayu/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ajax跨域</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/17/alipay-questiones/">阿里2018面试题总结</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/15/js-kuayu/">ajax跨域</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/22/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/22/first/">dva的基本使用以及核心源码分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Symboler<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

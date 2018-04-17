@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>❤️ MM ❤️</title>
+  <title>❤️ M青阳玄英M ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="❤️ MM ❤️">
+<meta property="og:title" content="❤️ M青阳玄英M ❤️">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="❤️ MM ❤️">
+<meta property="og:site_name" content="❤️ M青阳玄英M ❤️">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="❤️ MM ❤️">
+<meta name="twitter:title" content="❤️ M青阳玄英M ❤️">
   
-    <link rel="alternate" href="/atom.xml" title="❤️ MM ❤️" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="❤️ M青阳玄英M ❤️" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +34,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">❤️ MM ❤️</a>
+        <a href="/" id="logo">❤️ M青阳玄英M ❤️</a>
       </h1>
       
     </div>
@@ -61,6 +61,70 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-alipay-questiones" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/17/alipay-questiones/" class="article-date">
+  <time datetime="2018-04-17T12:18:46.000Z" itemprop="datePublished">2018-04-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/17/alipay-questiones/">阿里2018面试题总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="使用css实现一个持续的动画效果"><a href="#使用css实现一个持续的动画效果" class="headerlink" title="使用css实现一个持续的动画效果"></a>使用css实现一个持续的动画效果</h2><p> 主要考察animation的用法</p>
+<p>` animation:mymove 5s infinite;</p>
+<pre><code>@keyframe mymove {
+from {top:0;}
+to{top:200px;}
+</code></pre><p>  }<br>`</p>
+<h2 id="使用js实现一个持续的动画效果"><a href="#使用js实现一个持续的动画效果" class="headerlink" title="使用js实现一个持续的动画效果"></a>使用js实现一个持续的动画效果</h2><p>使用requestAnimationFrame<br>`<br>    //兼容性处理</p>
+<pre><code>window.requestAnimFrame = (function(){
+  return window.requestAnimationFrame
+    window.webkitRequestAnimationFrame
+    window.mozRequestAnimationFrame
+    function(callback){
+      window.setTimeout(callback,1000/60)
+    }
+})()
+var e = document.getElementById(&quot;e&quot;)
+var flag = true;
+var left = 0;
+function render(){
+  left ==0?flag=true:left==100?flag=false:&apos;&apos;;
+  flag?e.style.left=`${left++}px`;
+    e.style.left =  `${left--}px`;
+}
+(function animloop(){
+  render();
+  requestAnimFrame(animloop);
+})()
+</code></pre><p>  `<br>  浏览器可以优化并行的动画动作，更合理的重新排列动作序列，并把能够合并的动作放在一个渲染周期内完成，从而呈现出更流畅的动画效果<br>  解决毫秒的不准确性<br>  避免过度渲染（渲染频率太高、tab不可见暂停等等）<br>  注：requestFrame和定时器一样也有一个类似的清除方法cancelAnimationFrame</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/17/alipay-questiones/" data-id="cjg3mxatt00001r89wgxskm4t" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-js-kuayu" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -103,7 +167,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjg0ckuow0001yd8980y2xngw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjg3mxau300021r8993b0mpyy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -148,7 +212,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/hello-world/" data-id="cjg0ckup00002yd895vg1q9m7" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/03/22/hello-world/" data-id="cjg3mxau500031r89k1occa0v" class="article-share-link">Share</a>
       
       
     </footer>
@@ -597,7 +661,7 @@ export default function ({
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjg0ckuoq0000yd89s2zqudv6" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjg3mxaty00011r89ccsp99nj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -635,6 +699,10 @@ export default function ({
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/04/17/alipay-questiones/">阿里2018面试题总结</a>
+          </li>
         
           <li>
             <a href="/2018/04/15/js-kuayu/">ajax跨域</a>
