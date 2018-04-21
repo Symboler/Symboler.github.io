@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>阿里2018面试题总结 | ❤️ M青阳玄英M ❤️</title>
+  <title>阿里2018面试题总结 | 复苏的奈文摩尔️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="使用css实现一个持续的动画效果 主要考察animation的用法 ` animation:mymove 5s infinite; @keyframe mymove { from {top:0;} to{top:200px;}   }` 使用js实现一个持续的动画效果使用requestAnimationFrame`    //兼容性处理 window.requestAnimFrame = (fun">
+  <meta name="description" content="动画实现方式HTML5/CSS3时代，我们要在web里做动画选择其实已经很多了: 你可以用CSS3的animattion+keyframes;例子： ` animation:mymove 5s infinite; @keyframe mymove {       from {top:0;}       to{top:200px;}  } ` 你也可以用css3的transition;例子：` di">
 <meta property="og:type" content="article">
 <meta property="og:title" content="阿里2018面试题总结">
 <meta property="og:url" content="http://yoursite.com/2018/04/17/alipay-questiones/index.html">
-<meta property="og:site_name" content="❤️ M青阳玄英M ❤️">
-<meta property="og:description" content="使用css实现一个持续的动画效果 主要考察animation的用法 ` animation:mymove 5s infinite; @keyframe mymove { from {top:0;} to{top:200px;}   }` 使用js实现一个持续的动画效果使用requestAnimationFrame`    //兼容性处理 window.requestAnimFrame = (fun">
+<meta property="og:site_name" content="复苏的奈文摩尔️">
+<meta property="og:description" content="动画实现方式HTML5/CSS3时代，我们要在web里做动画选择其实已经很多了: 你可以用CSS3的animattion+keyframes;例子： ` animation:mymove 5s infinite; @keyframe mymove {       from {top:0;}       to{top:200px;}  } ` 你也可以用css3的transition;例子：` di">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-04-17T12:26:28.755Z">
+<meta property="og:updated_time" content="2018-04-21T05:35:40.929Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="阿里2018面试题总结">
-<meta name="twitter:description" content="使用css实现一个持续的动画效果 主要考察animation的用法 ` animation:mymove 5s infinite; @keyframe mymove { from {top:0;} to{top:200px;}   }` 使用js实现一个持续的动画效果使用requestAnimationFrame`    //兼容性处理 window.requestAnimFrame = (fun">
+<meta name="twitter:description" content="动画实现方式HTML5/CSS3时代，我们要在web里做动画选择其实已经很多了: 你可以用CSS3的animattion+keyframes;例子： ` animation:mymove 5s infinite; @keyframe mymove {       from {top:0;}       to{top:200px;}  } ` 你也可以用css3的transition;例子：` di">
   
-    <link rel="alternate" href="/atom.xml" title="❤️ M青阳玄英M ❤️" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="复苏的奈文摩尔️" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -38,7 +38,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">❤️ M青阳玄英M ❤️</a>
+        <a href="/" id="logo">复苏的奈文摩尔️</a>
       </h1>
       
     </div>
@@ -86,34 +86,209 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="使用css实现一个持续的动画效果"><a href="#使用css实现一个持续的动画效果" class="headerlink" title="使用css实现一个持续的动画效果"></a>使用css实现一个持续的动画效果</h2><p> 主要考察animation的用法</p>
-<p>` animation:mymove 5s infinite;</p>
-<pre><code>@keyframe mymove {
-from {top:0;}
-to{top:200px;}
-</code></pre><p>  }<br>`</p>
-<h2 id="使用js实现一个持续的动画效果"><a href="#使用js实现一个持续的动画效果" class="headerlink" title="使用js实现一个持续的动画效果"></a>使用js实现一个持续的动画效果</h2><p>使用requestAnimationFrame<br>`<br>    //兼容性处理</p>
-<pre><code>window.requestAnimFrame = (function(){
-  return window.requestAnimationFrame
-    window.webkitRequestAnimationFrame
-    window.mozRequestAnimationFrame
-    function(callback){
-      window.setTimeout(callback,1000/60)
-    }
-})()
-var e = document.getElementById(&quot;e&quot;)
-var flag = true;
-var left = 0;
-function render(){
-  left ==0?flag=true:left==100?flag=false:&apos;&apos;;
-  flag?e.style.left=`${left++}px`;
-    e.style.left =  `${left--}px`;
+        <h2 id="动画实现方式"><a href="#动画实现方式" class="headerlink" title="动画实现方式"></a>动画实现方式</h2><p>HTML5/CSS3时代，我们要在web里做动画选择其实已经很多了:</p>
+<h3 id="你可以用CSS3的animattion-keyframes"><a href="#你可以用CSS3的animattion-keyframes" class="headerlink" title="你可以用CSS3的animattion+keyframes;"></a>你可以用CSS3的animattion+keyframes;</h3><p>例子：</p>
+<p>`</p>
+<pre><code>animation:mymove 5s infinite;
+@keyframe mymove {
+      from {top:0;}
+      to{top:200px;}
+ }
+</code></pre><p>`</p>
+<h3 id="你也可以用css3的transition"><a href="#你也可以用css3的transition" class="headerlink" title="你也可以用css3的transition;"></a>你也可以用css3的transition;</h3><p>例子：<br>`</p>
+<pre><code>div{
+    width:100px;
+    transition: width 2s;
+    -moz-transition: width 2s; /* Firefox 4 */
+    -webkit-transition: width 2s; /* Safari 和 Chrome */
+    -o-transition: width 2s; /* Opera */
 }
-(function animloop(){
-  render();
-  requestAnimFrame(animloop);
-})()
-</code></pre><p>  `<br>  浏览器可以优化并行的动画动作，更合理的重新排列动作序列，并把能够合并的动作放在一个渲染周期内完成，从而呈现出更流畅的动画效果<br>  解决毫秒的不准确性<br>  避免过度渲染（渲染频率太高、tab不可见暂停等等）<br>  注：requestFrame和定时器一样也有一个类似的清除方法cancelAnimationFrame</p>
+</code></pre><p>`</p>
+<h4 id="你还可以用通过在canvas上作图来实现动画，也可以借助jQuery动画相关的API方便地实现"><a href="#你还可以用通过在canvas上作图来实现动画，也可以借助jQuery动画相关的API方便地实现" class="headerlink" title="你还可以用通过在canvas上作图来实现动画，也可以借助jQuery动画相关的API方便地实现;"></a>你还可以用通过在canvas上作图来实现动画，也可以借助jQuery动画相关的API方便地实现;</h4><h4 id="当然最原始的你还可以使用window-setTimout-或者window-setInterval-通过不断更新元素的状态位置等来实现动画，前提是画面的更新频率要达到每秒60次才能让肉眼看到流畅的动画效果。"><a href="#当然最原始的你还可以使用window-setTimout-或者window-setInterval-通过不断更新元素的状态位置等来实现动画，前提是画面的更新频率要达到每秒60次才能让肉眼看到流畅的动画效果。" class="headerlink" title="当然最原始的你还可以使用window.setTimout()或者window.setInterval()通过不断更新元素的状态位置等来实现动画，前提是画面的更新频率要达到每秒60次才能让肉眼看到流畅的动画效果。"></a>当然最原始的你还可以使用window.setTimout()或者window.setInterval()通过不断更新元素的状态位置等来实现动画，前提是画面的更新频率要达到每秒60次才能让肉眼看到流畅的动画效果。</h4><h3 id="window-requestAnimationFrame-方法。"><a href="#window-requestAnimationFrame-方法。" class="headerlink" title="window.requestAnimationFrame()方法。"></a>window.requestAnimationFrame()方法。</h3><p>MDN上关于requestAnimationFrame的定义：<br>The window.requestAnimationFrame() method tells the browser that you wish to perform an animation and requests that the browser call a specified function to update an animation before the next repaint. The method takes as an argument a callback to be invoked before the repaint.</p>
+<p>window.requestAnimationFrame() 将告知浏览器你马上要开始动画效果了，后者需要在下次动画前调用相应方法来更新画面。这个方法就是传递给window.requestAnimationFrame()的回调函数。<br>也可理解这个方法原理其实也就跟setTimeout/setInterval差不多，通过递归调用同一方法来不断更新画面以达到动起来的效果</p>
+<h4 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h4><p>可以直接调用，也可以通过window来调用，接收一个函数作为回调，返回一个ID值，通过把这个ID值传给window.cancelAnimationFrame()可以取消该次动画。</p>
+<pre><code>`requestAnimationFrame(callback)//callback为回调函数`
+</code></pre><p>例子：模拟一个进度条动画，初始div宽度为1px,在step函数中将进度加1然后再更新到div宽度上，在进度达到100之前，一直重复这一过程。</p>
+<p>`</p>
+<pre><code>   &lt;div id=&quot;test&quot; style=&quot;width:1px;height:17px;background:#0f0;&quot;&gt;0%&lt;/div&gt;
+   &lt;input type=&quot;button&quot; value=&quot;Run&quot; id=&quot;run&quot;/&gt;
+    //复制代码
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+var start = null;
+var ele = document.getElementById(&quot;test&quot;);
+var progress = 0;
+
+function step(timestamp) {
+progress += 1;
+ele.style.width = progress + &quot;%&quot;;
+ele.innerHTML=progress + &quot;%&quot;;
+if (progress &lt; 100) {
+    requestAnimationFrame(step);
+}
+}
+requestAnimationFrame(step);
+document.getElementById(&quot;run&quot;).addEventListener(&quot;click&quot;, function() {
+ele.style.width = &quot;1px&quot;;
+progress = 0;
+requestAnimationFrame(step);
+}, false);
+</code></pre><p>  `<br>目前主流浏览器均支持，ie10+</p>
+<p>优点：<br>  浏览器可以优化并行的动画动作，更合理的重新排列动作序列，并把能够合并的动作放在一个渲染周期内完成，从而呈现出更流畅的动画效果<br>  解决毫秒的不准确性<br>  避免过度渲染（渲染频率太高、tab不可见暂停等等）<br>  优于setTimeout/setInterval的地方在于它是由浏览器专门为动画提供的API，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停，有效节省了CPU开销。</p>
+<h2 id="常用布局实现"><a href="#常用布局实现" class="headerlink" title="常用布局实现"></a>常用布局实现</h2><h3 id="右边宽度固定，左边自适应"><a href="#右边宽度固定，左边自适应" class="headerlink" title="右边宽度固定，左边自适应"></a>右边宽度固定，左边自适应</h3><p>第一种实现方式：flex定位<br>    ` </p>
+<pre><code>  &lt;style&gt;
+    body{
+    display: flex;
+    }
+  .left{
+    background-color: rebeccapurple;
+    height: 200px;
+    flex: 1;
+  }
+  .right{
+    background-color: red;
+    height: 200px;
+    width: 100px;
+  }
+&lt;/style&gt;
+&lt;body&gt;
+  &lt;div class=&quot;left&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;right&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;`
+</code></pre><p>第二种实现方式：浮动定位实现</p>
+<p> ` </p>
+<pre><code> &lt;style&gt;
+    div {
+      height: 200px;
+    }
+    .left {
+      float: right;
+      width: 200px;
+      background-color: rebeccapurple;
+    }
+    .right {
+      margin-right: 200px;
+      background-color: red;
+    }
+&lt;/style&gt;
+&lt;body&gt;
+  &lt;div class=&quot;left&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;right&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;`
+</code></pre><h3 id="水平垂直居中"><a href="#水平垂直居中" class="headerlink" title="水平垂直居中"></a>水平垂直居中</h3><p>第一种实现方式：绝对定位+transform<br>` </p>
+<pre><code>#container{
+   position:relative;
+   }
+#center{
+   width:100px;
+   height:100px;
+   position:absolute;
+   top:50%;
+   left:50%;
+   transform: translate(-50%,-50%);
+ }`
+</code></pre><p>第二种实现方式：绝对定位+margin<br>` </p>
+<pre><code> #container{
+    position:relative;
+  }
+ #center{
+    width:100px;
+    height:100px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-50px 0 0 -50px;
+}`
+</code></pre><p>第三种实现方式：绝对定位<br>` </p>
+<pre><code>#container{
+   position:relative;
+ }
+#center{
+   position:absolute;
+   margin:auto;
+   top:0;
+   bottom:0;
+   left:0;
+   right:0;
+}`
+</code></pre><p>第四种实现方式：flex定位<br>` </p>
+<pre><code>#container{
+   display:flex;
+   justify-content:center;
+   align-items: center;
+ }`
+</code></pre><h3 id="四种地位方式的区别"><a href="#四种地位方式的区别" class="headerlink" title="四种地位方式的区别"></a>四种地位方式的区别</h3><p>static 是默认值；<br>relative 相对定位 相对于自身原有位置进行偏移，仍处于标准文档流中；<br>absolute 绝对定位 相对于最近的已定位的祖先元素, 有已定位(指 position不是 static的元素)祖先元素, 以最近的祖先元素为参考标准。如果无已定位祖先元素, 以 body元素为偏移参照基准, 完全脱离了标准文档流；<br>fixed 固定定位的元素会相对于视窗来定位,这意味着即便页面滚动，它还是会停留在相同的位置。一个固定定位元素不会保留它原本在页面应有的空隙。</p>
+<h2 id="es6小问题"><a href="#es6小问题" class="headerlink" title="es6小问题"></a>es6小问题</h2><h3 id="let和var的区别"><a href="#let和var的区别" class="headerlink" title="let和var的区别"></a>let和var的区别</h3><p>var 声明的变量，其作用域为该语句所在的函数内，且存在变量提升现象<br>let 声明的变量，其作用域为该语句所在的代码块内，不存在变量提升，且不允许重复声明</p>
+<h3 id="为什么var可以重复声明"><a href="#为什么var可以重复声明" class="headerlink" title="为什么var可以重复声明"></a>为什么var可以重复声明</h3><p>当我们执行代码时，我们可以简单的理解为新变量分配一块儿内存，命名为 a，并赋值为 2，但在运行的时候编译器与引擎还会进行两项额外的操作：判断变量是否已经声明：</p>
+<p>首先编译器对代码进行分析拆解，从左至右遇见 var a，则编译器会询问作用域是否已经存在叫 a 的变量了，如果不存在，则招呼作用域声明一个新的变量 a，若已经存在，则忽略 var 继续向下编译，这时 a = 2被编译成可执行的代码供引擎使用。<br>引擎遇见 a=2时同样会询问在当前的作用域下是否有变量 a，若存在，则将 a赋值为<br>2（由于第一步编译器忽略了重复声明的var，且作用域中已经有 a，所以重复声明会发生值的覆盖而并不会报错）。若不存在，则顺着作用域链向上查找，若最终找到了变量 a则将其赋值 2，若没有找到，则招呼作用域声明一个变量 a并赋值为 2。</p>
+<h3 id="封装一个函数，参数是定时器的时间，-then执行回掉函数"><a href="#封装一个函数，参数是定时器的时间，-then执行回掉函数" class="headerlink" title="封装一个函数，参数是定时器的时间，.then执行回掉函数"></a>封装一个函数，参数是定时器的时间，.then执行回掉函数</h3><p>` </p>
+<pre><code> function sleep (time) {
+  return new Promise((resolve) =&gt; setTimeout(resolve, time));
+}`
+</code></pre><h3 id="关于this指向的问题"><a href="#关于this指向的问题" class="headerlink" title="关于this指向的问题"></a>关于this指向的问题</h3><p>` </p>
+<pre><code>obj = {
+  name: &apos;a&apos;,
+  getName : function () {
+    console.log(this.name);
+  }
+}
+var fn = obj.getName
+obj.getName()//a
+var fn2 = obj.getName()//a
+fn()//undefined
+fn2()`//报错
+</code></pre><h3 id="CommonJS-中的-require-exports-和-ES6-中的-import-export-区别？"><a href="#CommonJS-中的-require-exports-和-ES6-中的-import-export-区别？" class="headerlink" title="CommonJS 中的 require/exports 和 ES6 中的 import/export 区别？"></a>CommonJS 中的 require/exports 和 ES6 中的 import/export 区别？</h3><p>CommonJS 模块的重要特性是加载时执行，即脚本代码在 require 的时候，就会全部执行。一旦出现某个模块被”循环加载”，就只输出已经执行的部分，还未执行的部分不会输出；</p>
+<p>ES6 模块是动态引用，如果使用 import 从一个模块加载变量，那些变量不会被缓存，而是成为一个指向被加载模块的引用，需要开发者自己保证，真正取值的时候能够取到值；<br>import/export 最终都是编译为 require/exports 来执行的；</p>
+<p>CommonJS 规范规定，每个模块内部， module 变量代表当前模块。这个变量是一个对象，它的 exports 属性（即module.exports ）是对外的接口。加载某个模块，其实是加载该模块的 module.exports 属性；</p>
+<p>export 命令规定的是对外的接口，必须与模块内部的变量建立一一对应关系。</p>
+<h3 id="一行代码实现数组去重"><a href="#一行代码实现数组去重" class="headerlink" title="一行代码实现数组去重"></a>一行代码实现数组去重</h3><p><code>[...new Set([1,2,3,1,&#39;a&#39;,1,&#39;a&#39;])]</code></p>
+<h3 id="使用addEventListener点击li弹出内容，并且动态添加li之后有效"><a href="#使用addEventListener点击li弹出内容，并且动态添加li之后有效" class="headerlink" title="使用addEventListener点击li弹出内容，并且动态添加li之后有效"></a>使用addEventListener点击li弹出内容，并且动态添加li之后有效</h3><p>` </p>
+<pre><code>&lt;ul&gt;
+  &lt;li&gt;1&lt;/li&gt;
+  &lt;li&gt;2&lt;/li&gt;
+  &lt;li&gt;3&lt;/li&gt;
+  &lt;li&gt;4&lt;/li&gt;
+&lt;/ul&gt;
+var ulNode = document.getElementById(&quot;ul&quot;);
+ulNode.addEventListener(&apos;click&apos;, function (e) {
+  if (e.target &amp;&amp; e.target.nodeName.toUpperCase() == &quot;LI&quot;) {
+    alert(e.target.innerHTML);
+  }
+}, false);`
+</code></pre><h3 id="怎么判断两个对象相等"><a href="#怎么判断两个对象相等" class="headerlink" title="怎么判断两个对象相等"></a>怎么判断两个对象相等</h3><p>可以通过JSON.stringify将两个对象专成字符串再进行比较</p>
+<h3 id="项目中性能优化的常用方式"><a href="#项目中性能优化的常用方式" class="headerlink" title="项目中性能优化的常用方式"></a>项目中性能优化的常用方式</h3><p>减少 HTTP 请求数<br>减少 DNS 查询<br>使用 CDN<br>避免重定向<br>图片懒加载<br>减少 DOM 元素数量<br>减少 DOM 操作<br>使用外部 JavaScript 和 CSS<br>压缩 JavaScript 、 CSS 、字体、图片等<br>优化 CSS Sprite<br>使用 iconfont<br>字体裁剪<br>多域名分发划分内容到不同域名<br>尽量减少 iframe 使用<br>避免图片 src 为空<br>把脚本放在页面底部 </p>
+<h3 id="模块化开发是怎么做的"><a href="#模块化开发是怎么做的" class="headerlink" title="模块化开发是怎么做的"></a>模块化开发是怎么做的</h3><p> 使用命名空间</p>
+<h3 id="Set和Map的数据结构"><a href="#Set和Map的数据结构" class="headerlink" title="Set和Map的数据结构"></a>Set和Map的数据结构</h3><p>ES6 提供了新的数据结构 Set 它类似于数组，但是成员的值都是唯一的，没有重复的值。<br>ES6 提供了 Map 数据结构。它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。也就是说， Object 结构提供了“字符串—值”的对应， Map 结构提供了“值—值”的对应，是一种更完善的 Hash结构实现。</p>
+<h3 id="weakMap和Map的区别"><a href="#weakMap和Map的区别" class="headerlink" title="weakMap和Map的区别"></a>weakMap和Map的区别</h3><p>WeakMap 结构与 Map 结构基本类似，唯一的区别是它只接受对象作为键名（ null 除外），不接受其他类型的值作为键名，而且键名所指向的对象，不计入垃圾回收机制。<br>WeakMap 最大的好处是可以避免内存泄漏。一个仅被 WeakMap 作为 key 而引用的对象，会被垃圾回收器回收掉。<br>WeakMap 拥有和 Map 类似的 set(key, value) 、 get(key)、has(key)、 delete(key) 和 clear() 方法, 没有任何与迭代有关的属性和方法。</p>
+<h3 id="重排和重绘"><a href="#重排和重绘" class="headerlink" title="重排和重绘"></a>重排和重绘</h3><p>部分渲染树（或者整个渲染树）需要重新分析并且节点尺寸需要重新计算。这被称为重排。注意这里至少会有一次重排-初始化页面布局。<br>由于节点的几何属性发生改变或者由于样式发生改变，例如改变元素背景色时，屏幕上的部分内容需要更新。这样的更新被称为重绘。</p>
+<h3 id="什么情况会触发重排和重绘？"><a href="#什么情况会触发重排和重绘？" class="headerlink" title="什么情况会触发重排和重绘？"></a>什么情况会触发重排和重绘？</h3><p>添加、删除、更新 DOM 节点<br>通过 display: none 隐藏一个 DOM 节点-触发重排和重绘<br>通过 visibility: hidden 隐藏一个 DOM 节点-只触发重绘，因为没有几何变化<br>移动或者给页面中的 DOM 节点添加动画<br>添加一个样式表，调整样式属性<br>用户行为，例如调整窗口大小，改变字号，或者滚动。</p>
+<h2 id="前端框架的小问题"><a href="#前端框架的小问题" class="headerlink" title="前端框架的小问题"></a>前端框架的小问题</h2><h3 id="webpack和gulp的基本了解"><a href="#webpack和gulp的基本了解" class="headerlink" title="webpack和gulp的基本了解"></a>webpack和gulp的基本了解</h3><h3 id="vue-router跳转和location-href-有什么区别"><a href="#vue-router跳转和location-href-有什么区别" class="headerlink" title="vue router跳转和location.href 有什么区别"></a>vue router跳转和location.href 有什么区别</h3><p>router是hash改变，location.href是页面跳转，刷新页面</p>
+<h3 id="vue双向绑定实现原理"><a href="#vue双向绑定实现原理" class="headerlink" title="vue双向绑定实现原理"></a>vue双向绑定实现原理</h3><p>通过object.defineProperty实现的</p>
+<h3 id="你能实现一下双向绑定吗？"><a href="#你能实现一下双向绑定吗？" class="headerlink" title="你能实现一下双向绑定吗？"></a>你能实现一下双向绑定吗？</h3><p>` </p>
+<pre><code>&lt;body&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;input type=&quot;text&quot; id=&quot;txt&quot;&gt;
+    &lt;p id=&quot;show-txt&quot;&gt;&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;script&gt;
+    var obj = {}
+    Object.defineProperty(obj, &apos;txt&apos;, {
+      get: function () {
+        return obj
+      },
+      set: function (newValue) {
+        document.getElementById(&apos;txt&apos;).value = newValue
+        document.getElementById(&apos;show-txt&apos;).innerHTML = newValue
+      }
+    })
+    document.addEventListener(&apos;keyup&apos;, function (e) {
+      obj.txt = e.target.value
+    })
+  &lt;/script&gt;
+&lt;/body&gt;`
+</code></pre><h2 id="浏览器缓存"><a href="#浏览器缓存" class="headerlink" title="浏览器缓存"></a>浏览器缓存</h2><p>浏览器缓存分为强缓存和协商缓存。当客户端请求某个资源时，获取缓存的流程如下：</p>
+<p>先根据这个资源的一些 http header 判断它是否命中强缓存，如果命中，则直接从本地获取缓存资源，不会发请求到服务器；<br>当强缓存没有命中时，客户端会发送请求到服务器，服务器通过另一些 request header验证这个资源是否命中协商缓存，称为 http再验证，如果命中，服务器将请求返回，但不返回资源，而是告诉客户端直接从缓存中获取，客户端收到返回后就会从缓存中获取资源；<br>强缓存和协商缓存共同之处在于，如果命中缓存，服务器都不会返回资源；<br>区别是，强缓存不对发送请求到服务器，但协商缓存会。<br>当协商缓存也没命中时，服务器就会将资源发送回客户端。<br>当 ctrl+f5 强制刷新网页时，直接从服务器加载，跳过强缓存和协商缓存；<br>当 f5 刷新网页时，跳过强缓存，但是会检查协商缓存；<br>强缓存</p>
+<p>Expires（该字段是 http1.0 时的规范，值为一个绝对时间的 GMT 格式的时间字符串，代表缓存资源的过期时间）<br>Cache-Control:max-age（该字段是 http1.1 的规范，强缓存利用其 max-age 值来判断缓存资源的最大生命周期，它的值单位为秒）<br>协商缓存</p>
+<p>Last-Modified（值为资源最后更新时间，随服务器response返回）<br>If-Modified-Since（通过比较两个时间来判断资源在两次请求期间是否有过修改，如果没有修改，则命中协商缓存）<br>ETag（表示资源内容的唯一标识，随服务器response返回）<br>If-None-Match（服务器通过比较请求头部的If-None-Match与当前资源的ETag是否一致来判断资源是否在两次请求之间有过修改，如果没有修改，则命中协商缓存）  </p>
 
       
     </div>
