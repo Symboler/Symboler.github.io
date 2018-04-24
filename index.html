@@ -62,6 +62,627 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-reta" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/24/reta/" class="article-date">
+  <time datetime="2018-04-24T03:02:33.000Z" itemprop="datePublished">2018-04-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/24/reta/">使用reta开发简单的后台管理页面</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="reta使用"><a href="#reta使用" class="headerlink" title="reta使用"></a>reta使用</h2><h3 id="功能模块开发流程总结"><a href="#功能模块开发流程总结" class="headerlink" title="功能模块开发流程总结"></a>功能模块开发流程总结</h3><h4 id="以服务列表页面开发为例"><a href="#以服务列表页面开发为例" class="headerlink" title="以服务列表页面开发为例"></a>以服务列表页面开发为例</h4><p>1、分析布局<br>确定BasicLayout布局<br>2、定义router组件<br>现在routes文件夹中定义空组件Demo备用<br>    `</p>
+<pre><code>import React, { Component } from &apos;react&apos;
+class Demo extends Component {
+      constructor(props) {
+        super(props);
+      }
+
+      componentWillMount() {
+
+      }
+      render() {
+        return (
+              &lt;div&gt;
+               demo页面
+              &lt;/div&gt;
+        )
+      }
+}
+
+export default Demo`
+</code></pre><p>在nav.js中添加页面路由配置<br>    `</p>
+<pre><code>{
+    name: &apos;测试页面&apos;,
+    path: &apos;demo&apos;,
+    component: dynamicWrapper(app, [], () =&gt; import(&apos;../routes/ServicesList&apos;)),
+  }`
+</code></pre><p>在headerMenu中添加菜单项<br>    `</p>
+<pre><code>{
+    text: &apos;测试页面&apos;,
+    path: &apos;/demo&apos;,
+    useLink: true,
+    replace: false,
+  },
+</code></pre><p><code>3、定义model组件
+在models定义demo.js备用，并在nav中demo组件中绑定[&#39;demo&#39;]</code></p>
+<pre><code>export default {
+      namespace: &apos;demo&apos;,
+
+      state: {
+
+      },
+
+      effects: {
+
+      },
+
+      reducers: {
+
+      },
+
+      subscriptions: {
+
+      },
+}`
+</code></pre><p>完成上面3步后，我们页面里面已经有空白的测试页面了<br><img src="http://lxlimg.gz.bcebos.com/list01.png" alt=""></p>
+<p>4、开始页面开发</p>
+<p>1）分析页面<br><img src="http://lxlimg.gz.bcebos.com/list.png" alt=""><br>服务列表页面可划分为四部分，<br>1：面包屑，已在layout中实现，不需要考虑；<br>2：searchpanel<br>3：左边siderbar<br>4: 右边table<br>注：对于实际项目，类似功能已抽离为组件形式，这里我还是不引用现成组件，从零开始开发，首先完成静态页面的搭建。</p>
+<p>第一部分searchpanel<br>不解释直接上代码</p>
+<pre><code>`render() {
+       const ctrlStyle = {
+        textAlign: &apos;right&apos;
+      };
+    return (
+       &lt;Form
+           className={classNames(Styles.searchPanel)}
+      &gt;
+        &lt;Row gutter={24}&gt;
+               &lt;Col span={8}&gt;
+                  &lt;Form.Item
+                      wrapperCol={{span:18}}
+                  &gt;
+                       &lt;Input placeholder={&quot;请输入服务名称搜索&quot;}/&gt;
+                  &lt;/Form.Item&gt;
+            &lt;/Col&gt;
+            &lt;Col span={16} style={ctrlStyle}&gt;
+                 &lt;Form.Item
+                 &gt;
+                    &lt;Button key=&apos;primary&apos; type=&apos;primary&apos; &gt;搜索&lt;/Button&gt;
+                    &lt;Button key=&apos;reset&apos; style={{ marginLeft: 8 }}&gt;重置&lt;/Button&gt;
+                   &lt;/Form.Item&gt;
+            &lt;/Col&gt;
+        &lt;/Row&gt;
+      &lt;/Form&gt;
+    )
+  }`
+</code></pre><p>第二部分sider</p>
+<pre><code>`//
+    &lt;Row gutter={24} style={{ margin: 0 }}&gt;
+      &lt;Col span={4} key=&apos;child&apos; style={{ paddingLeft: 0 }}&gt;
+                     &lt;Menu
+                mode=&quot;inline&quot;
+                defaultSelectedKeys={[ &apos;-1&apos; ]}
+                className={Styles.menu}
+              &gt;
+                {
+                  menuData.subfiles === undefined ? null :
+                  menuData.subfiles.map(item =&gt; this.fileItem(item))
+                }
+            {
+                  menuData.subfolders === undefined ? null:
+                  menuData.subfolders.map(item =&gt; this.menuItem(item))
+                }
+              &lt;/Menu&gt;
+      &lt;/Col&gt;
+      &lt;Col span={20} key=&apos;table&apos; style={{ paddingRight: 0 }}&gt;table&lt;/Col&gt;
+    &lt;/Row&gt;`
+
+
+
+`fileItem(item) {
+    return (
+          &lt;Menu.Item key={item.id}&gt;{item.name}&lt;/Menu.Item&gt;
+    )
+  }
+  menuItem (item) {
+    if (this.isSubfiles) {
+          if (item.subfolders &amp;&amp; item.subfolders.length) {
+            return (
+                  &lt;SubMenu key={item.path} title={&lt;span&gt;&lt;span&gt;{item.name}&lt;/span&gt;&lt;/span&gt;}&gt;
+                {
+                      item.subfiles.map(v =&gt; this.fileItem(v))
+                }
+                {
+                      item.subfolders.map(v =&gt; this.menuItem(v))
+                }
+                  &lt;/SubMenu&gt;
+            )
+          } else if (item.subfiles &amp;&amp; item.subfiles.length){
+            return (
+                  &lt;SubMenu key={item.path} title={&lt;span&gt;&lt;span&gt;{item.name}&lt;/span&gt;&lt;/span&gt;}&gt;
+                {
+                      item.subfiles.map(v =&gt; this.fileItem(v))
+                }
+                  &lt;/SubMenu&gt;
+            )
+          } else {
+            return &lt;Menu.Item key={item.path} disabled&gt;{item.name}&lt;/Menu.Item&gt;
+          }
+        } else {
+          if (item.subfolders &amp;&amp; item.subfolders.length) {
+            return (
+                  &lt;SubMenu onTitleClick={this.props.onClick} key={item.path} title={&lt;span&gt;&lt;span&gt;{item.name}&lt;/span&gt;&lt;/span&gt;}&gt;
+                {
+                  item.subfolders.length === 0 ? null :
+                  item.subfolders.map(v =&gt; this.menuItem(v))
+                }
+                  &lt;/SubMenu&gt;
+            )
+      } else {
+        return &lt;Menu.Item key={item.path}&gt;{item.name}&lt;/Menu.Item&gt;
+      }
+    }
+  }`
+
+
+`//模拟数据
+
+ const menuData = {
+
+          &quot;path&quot;:&quot;/5&quot;,
+          &quot;name&quot;:&quot;api&quot;,
+          &quot;subfolders&quot;:[
+              { name: &apos;所有服务&apos;, path: &apos;-1&apos;},
+             {&quot;path&quot;:&quot;/5/1064&quot;,
+                  &quot;name&quot;:&quot;交通出行&quot;,
+                   &quot;code&quot;:&quot;traffic&quot;,
+                  &quot;description&quot;:&quot;绿色出行 低碳生活1&quot;,
+                  &quot;subfolders&quot;:[]
+            },
+            {&quot;path&quot;:&quot;/5/1006&quot;,
+                &quot;name&quot;:&quot;金融理财&quot;,
+                &quot;code&quot;:&quot;jinrong&quot;,
+                &quot;description&quot;:&quot;金融&quot;,
+                &quot;subfolders&quot;:[
+                    {&quot;path&quot;:&quot;/5/1006/1023&quot;,
+                        &quot;name&quot;:&quot;农业市场&quot;,
+                        &quot;code&quot;:&quot;farmmarket&quot;,
+                        &quot;description&quot;:&quot;&quot;,
+                        &quot;subfolders&quot;:[
+                        {&quot;path&quot;:&quot;/5/1006/1023/1024&quot;,
+                            &quot;name&quot;:&quot;水果经济&quot;,
+                            &quot;code&quot;:&quot;fruitEnco&quot;,
+                            &quot;description&quot;:&quot;&quot;,
+                            &quot;subfolders&quot;:[]
+                          }]
+                    }
+            ]},
+            {&quot;path&quot;:&quot;/5/1151&quot;,
+                &quot;name&quot;:&quot;我在东北玩泥巴&quot;,
+                &quot;code&quot;:&quot;niba&quot;,
+                &quot;description&quot;:&quot;我在大连没有家&quot;,
+                &quot;subfolders&quot;:[]},
+            {&quot;path&quot;:&quot;/5/1007&quot;,
+                &quot;name&quot;:&quot;便民生活&quot;,
+                &quot;code&quot;:&quot;life&quot;,
+                &quot;description&quot;:&quot;便民生活的&quot;,
+                &quot;subfolders&quot;:[]}]
+        }`
+</code></pre><p>第三部分：table，此处省略了模拟数据的定义<br>    `</p>
+<pre><code>&lt;Col span={20} key=&apos;table&apos; style={{ paddingRight: 0 }}&gt;
+    &lt;Table
+        className={Styles.frontTable}
+          dataSource={tableData}
+          columns={this.listColums}
+          rowKey={record =&gt; record.id}
+        span={12}
+          /&gt;
+      &lt;/Col&gt;`
+</code></pre><p>上面三部分主要完成了整个静态页面，看一下页面的效果</p>
+<p><img src="http://lxlimg.gz.bcebos.com/demo002.png" alt=""></p>
+<p>接下来就是要分析页面内的逻辑，处理前后端交互的部分<br>按照我自己的习惯，一般是先主后次，先易后难。<br>涉及交互实际上也包含了搜索、侧边栏展示及选择、表单的展示。<br>显然表单是我们页面的最主要的部分，同时单独去处理表单的显示交互是比较简单的，如果去处理搜索功能，它会影响到表单的展示，反而是属于复杂的部分。所以我们先处理表单数据的渲染。<br>表单涉及三个交互：1、数据的动态获取；2、分页的获取；3、查看详情</p>
+<p>在处理交互之前，先明确reta把所有数据的处理已经放在models中，通过props传递给组件，因此对应的数据需要在models里面定义并讲store与组件关联</p>
+<p>1、数据的动态获取<br>    `</p>
+<pre><code>//routers/Demo/index.js
+ componentWillMount() {
+        this.props.dispatch({
+            type: `demo/fetchTotalList`,
+          });
+  }
+const { servicesList,dispatch} = this.props;
+    ...
+&lt;Table
+    className={Styles.frontTable}
+    dataSource={servicesList.list}
+    columns={this.listColums}
+    rowKey={record =&gt; record.id}
+    span={12}
+  /&gt;
+    ...
+export default connect(state =&gt; ({
+      servicesList: state.demo.servicesList
+}))(Demo);
+
+//models/demo.js
+
+ state: {
+      servicesList: [],
+  },
+
+effects: {
+   *fetchTotalList({ query }, { call, put }) {
+      const res = yield call(queryTotalList, query);//queryTotalList是一个fetch请求，可以本地写模拟数据
+      if (res.status == &apos;success&apos;) {
+        yield put({
+          type: &apos;saveTotalListData&apos;,
+          payload: res.data,
+        });
+      } else {
+        yield put({
+              type: &apos;saveTotalListData&apos;,
+              payload: [],
+        });
+      }
+    },
+  },
+
+reducers: {
+       saveTotalListData(state, { payload }) {
+          return {
+            ...state,
+            servicesList: payload,
+          };
+    },
+  },`
+</code></pre><p>到此简单的异步请求表单数据并并展示已经完成。</p>
+<p>第二步：分页器设置<br>    `//routers/Demo/index.js</p>
+<pre><code> paginationChange = (page, pageSize) =&gt; {
+    const query = {
+          offset: pageSize * (page - 1),
+          limit: pageSize,
+    };
+     this.props.dispatch({
+        type: `demo/fetchTotalList`,
+        query: {
+             ...query,
+            dirPath: this.state.dirPath,
+        }
+      });
+
+  };
+...
+
+const paginationData = {
+  total: 0,
+  total: servicesList.totalCount,
+  current: servicesList.pageNum,
+  pageSize: servicesList.limit,
+  showSizeChanger: true,
+  showQuickJumper: true,
+  pageSizeOptions: [&quot;10&quot;, &quot;20&quot;, &quot;50&quot;, &quot;100&quot;],
+  onChange: this.paginationChange,
+  onShowSizeChange: this.paginationChange,
+  showTotal: (total) =&gt; (`共有${total}条记录`),
+};
+
+...
+&lt;Table
+    className={Styles.frontTable}
+    dataSource={servicesList.list}
+    columns={this.listColums}
+    pagination={paginationData}
+    rowKey={record =&gt; record.id}
+    span={12}
+          /&gt;`
+</code></pre><p>到此第二步分页展示完成。</p>
+<p>第三步是查看详情实现<br>这个很简单，只要在表单的列属性里配置链接即可<br>    `</p>
+<pre><code> this.listColums = [
+  {
+    title: &apos;服务名称&apos;,
+    dataIndex: &apos;abilityName&apos;,
+    className: &apos;no-right-border&apos;,
+    width: &apos;20%&apos;,
+  },
+  {
+    title: &apos;部门名称&apos;,
+    dataIndex: &apos;deptName&apos;,
+    className: &apos;no-right-border&apos;,
+    width: &apos;20%&apos;,
+  },
+  {
+    title: &apos;所属目录&apos;,
+    dataIndex: &apos;dirName&apos;,
+    className: &apos;no-right-border&apos;,
+    width: &apos;10%&apos;,
+  },
+  {
+    title: &apos;分级&apos;,
+    dataIndex: &apos;clsName&apos;,
+    className: &apos;no-right-border&apos;,
+    width: &apos;10%&apos;,
+  },
+  {
+    title: &apos;服务简介&apos;,
+    dataIndex: &apos;briefDescription&apos;,
+    className: &apos;no-right-border&apos;,
+  },
+  {
+    title: &apos;操作&apos;,
+    dataIndex: &apos;action&apos;,
+    width: this.props.match.path.indexOf(&apos;/devAccess/applyService&apos;) &gt; -1 ? 140 : 100,
+    render: (text, record) =&gt; (
+      &lt;span&gt;
+        &lt;Link
+          to={this.renderDetailLink(record.id)}
+        &gt;
+          查看详情
+        &lt;/Link&gt;
+      &lt;/span&gt;
+    ),
+  }
+]
+ this.renderDetailLink = id =&gt; {
+  const path = this.props.match.path;
+  if(path.indexOf(&apos;/devAccess/applyService&apos;) &gt; -1) {
+    return `/devAccess/applyService/${this.props.match.params.appId}/serviceInfo/${id}`
+  } else if (path.indexOf(&apos;/devAccess&apos;) &gt; -1) {
+    return `/devAccess/servicesList/serviceInfo/${id}`;
+  } else if (path.indexOf(&apos;/pubAccess&apos;) &gt; -1) {
+    return `/pubAccess/servicesList/serviceDetails/${id}`
+  } else {
+    return `/servicesList/serviceInfo/${id}`;
+  }
+}`
+</code></pre><p>上面三步完成了表单涉及的交互（当然还有些细节需要去完善，比如增加loading状态）</p>
+<p>接下来去完成左侧菜单栏的动态获取</p>
+<pre><code>`//models中处理数据请求
+  namespace: &apos;demo&apos;,
+
+      state: {
+      servicesList: [],
+       menuData: {
+          subfolders: []
+    },
+  },
+
+*fetchMenuData(_, { call, put }) {
+  const res = yield call(queryMenuData);
+  if (res.status === &apos;success&apos;) {
+    const subFolders = res.data.subfolders || [];
+    res.data.subfolders = [ { name: &apos;所有服务&apos;, path: &apos;-1&apos;}, ...subFolders ]
+    yield put({
+      type: &apos;saveMenuData&apos;,
+      payload: res.data,
+    });
+  }
+},
+saveMenuData(state, { payload }) {
+  return {
+    ...state,
+    menuData: payload,
+  };
+},
+...
+//页面渲染前获取数据
+componentWillMount() {
+         this.setState({
+              fetchList: this.props.match.path.indexOf(&apos;pubAccess&apos;) &gt; -1 ? &apos;fetchPubList&apos; : &apos;fetchTotalList&apos;,
+        }, () =&gt;{
+          this.props.dispatch({
+            type: `demo/${this.state.fetchList}`,
+          });
+});
+  this.props.dispatch({
+      type: &quot;demo/fetchMenuData&quot;,
+    });
+  }
+//处理菜单项的点击事件，获取对应的表单数据，需要注意的是SubMenu也需要绑定click事件
+ handleClickSider(e) {
+    const { dispatch, currentUser } = this.props;
+    this.setState({
+          dirPath: e.key
+    }, () =&gt; {
+      const query = {
+        dirPath: this.state.dirPath,
+      }
+      dispatch({
+        type: `demo/${this.state.fetchList}`,
+        query: e.key === &apos;-1&apos; ? null : query,
+      });
+    })
+  }
+const { servicesList,dispatch,menuData} = this.props;
+...
+ menuItem (item) {
+    if (this.isSubfiles) {
+      if (item.subfolders &amp;&amp; item.subfolders.length) {
+        return (
+              &lt;SubMenu key={item.path} title={&lt;span&gt;&lt;span&gt;{item.name}&lt;/span&gt;&lt;/span&gt;}&gt;
+        {
+          item.subfiles.map(v =&gt; this.fileItem(v))
+        }
+        {
+          item.subfolders.map(v =&gt; this.menuItem(v))
+        }
+      &lt;/SubMenu&gt;
+    )
+  } else if (item.subfiles &amp;&amp; item.subfiles.length){
+    return (
+      &lt;SubMenu key={item.path} title={&lt;span&gt;&lt;span&gt;{item.name}&lt;/span&gt;&lt;/span&gt;}&gt;
+        {
+          item.subfiles.map(v =&gt; this.fileItem(v))
+        }
+      &lt;/SubMenu&gt;
+    )
+  } else {
+    return &lt;Menu.Item key={item.path} disabled&gt;{item.name}&lt;/Menu.Item&gt;
+  }
+} else {
+  if (item.subfolders &amp;&amp; item.subfolders.length) {
+    return (
+      &lt;SubMenu onTitleClick={this.handleClickSider.bind(this)} key={item.path} title={&lt;span&gt;&lt;span&gt;{item.name}&lt;/span&gt;&lt;/span&gt;}&gt;
+        {
+          item.subfolders.length === 0 ? null :
+          item.subfolders.map(v =&gt; this.menuItem(v))
+        }
+      &lt;/SubMenu&gt;
+    )
+  } else {
+    return &lt;Menu.Item key={item.path}&gt;{item.name}&lt;/Menu.Item&gt;
+  }
+}
+  }
+ &lt;Menu
+    onClick={this.handleClickSider.bind(this)}
+    mode=&quot;inline&quot;
+       defaultSelectedKeys={[ &apos;-1&apos; ]}
+       className={Styles.menu}
+      &gt;
+    {
+          menuData.subfiles === undefined ? null :
+          menuData.subfiles.map(item =&gt; this.fileItem(item))
+    }
+    {
+          menuData.subfolders === undefined ? null:
+          menuData.subfolders.map(item =&gt; this.menuItem(item))
+    }
+      &lt;/Menu&gt;`
+</code></pre><p>到此左边菜单栏的交互也完成</p>
+<p>最后一步就是搜索栏，这部分需要对ant的form组件熟悉掌握，form.create以及this.props.form自带api的使用</p>
+<pre><code>`class SearchPanel extends Component {
+   handleSubmit = (e) =&gt; {
+    e &amp;&amp; e.preventDefault &amp;&amp; e.preventDefault();
+      this.props.form.validateFields((err, values) =&gt; {
+          if (err === null &amp;&amp; this.props.fetchDataFunc) {
+            this.props.fetchDataFunc(values);
+          }
+    });
+
+      };
+    handleReset = () =&gt; {
+        this.props.form.resetFields();
+        if (this.props.fetchDataFunc) {
+              this.props.fetchDataFunc();
+        }
+      };
+  render(){
+       const ctrlStyle = {
+        textAlign: &apos;right&apos;
+      };
+      const { getFieldDecorator } = this.props.form;
+       const name=&quot;name&quot;
+       const options= [
+        {
+          type: &apos;input&apos;,
+          name: &apos;name&apos;,
+          placeholder: &apos;请输入服务名称搜索&apos;,
+        },
+      ]
+
+      return (&lt;Form
+          className={classNames(Styles.searchPanel)}
+          onSubmit={this.handleSubmit}
+          &gt;
+          &lt;Row gutter={24}&gt;
+              &lt;Col span={8}&gt;
+                  &lt;Form.Item
+                      wrapperCol={{span:18}}
+                      name={name}
+                  &gt;  {
+                  getFieldDecorator(name, options)(&lt;Input placeholder={&quot;请输入服务名称搜索&quot;}/&gt;)
+                }
+
+                  &lt;/Form.Item&gt;
+              &lt;/Col&gt;
+              &lt;Col span={16} style={ctrlStyle}&gt;
+              &lt;Form.Item
+              &gt;
+              &lt;Button key=&apos;primary&apos; type=&apos;primary&apos; htmlType=&apos;submit&apos;&gt;搜索&lt;/Button&gt;
+              &lt;Button key=&apos;reset&apos; style={{ marginLeft: 8 }} onClick={this.handleReset}&gt;重置&lt;/Button&gt;
+              &lt;/Form.Item&gt;
+              &lt;/Col&gt;
+          &lt;/Row&gt;
+      &lt;/Form&gt;)
+      }
+}
+SearchPanel = Form.create({})(SearchPanel);
+</code></pre><p>`</p>
+<p>到此我们完成了一个常见的表单展示页面，包含search+sider+table</p>
+<p>总结一下过程中的注意的问题点<br>1、整体布局需优先考虑好，采用antd的栅格来完成<br>2、searchPanel是对From组件的封装，需熟悉掌握Form.create的使用以及this.props.form的api<br>3、侧边栏即menu组件的使用<br>4、table组件的使用，主要就是dataSource、columns、pagination等属性的定义，别忘了rowKey<br>5、所有状态均在models中处理，通过props传入view组件</p>
+<p>最后需要说明的是在实际项目中，这种功能模块的页面会有很多，所以通常会把searchPanel和sider分别抽离成一级组件；table+searchPanel+sider抽离为二级组件，通过属性配置来实现不同场景的展示与交互。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/24/reta/" data-id="cjgd34v7r0004zwvw0byc4n6i" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/18/hello-world/" class="article-date">
+  <time datetime="2018-04-18T08:08:06.048Z" itemprop="datePublished">2018-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/18/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/18/hello-world/" data-id="cjgd34v7j0002zwvwj5ffpk34" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-alipay-questiones" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/04/17/alipay-questiones/" class="article-date">
@@ -291,7 +912,7 @@ ulNode.addEventListener(&apos;click&apos;, function (e) {
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/17/alipay-questiones/" data-id="cjg3mxatt00001r89wgxskm4t" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/17/alipay-questiones/" data-id="cjgd34v780000zwvw6wnxanvm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -342,52 +963,7 @@ ulNode.addEventListener(&apos;click&apos;, function (e) {
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjg3mxau300021r8993b0mpyy" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/03/22/hello-world/" class="article-date">
-  <time datetime="2018-03-22T12:33:13.000Z" itemprop="datePublished">2018-03-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/22/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/hello-world/" data-id="cjg3mxau500031r89k1occa0v" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjgd34v7q0003zwvwuwy9dmhn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -836,7 +1412,7 @@ export default function ({
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjg3mxaty00011r89ccsp99nj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjgd34v7e0001zwvwyms63uao" class="article-share-link">Share</a>
       
       
     </footer>
@@ -876,15 +1452,19 @@ export default function ({
       <ul>
         
           <li>
+            <a href="/2018/04/24/reta/">使用reta开发简单的后台管理页面</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
             <a href="/2018/04/17/alipay-questiones/">阿里2018面试题总结</a>
           </li>
         
           <li>
             <a href="/2018/04/15/js-kuayu/">ajax跨域</a>
-          </li>
-        
-          <li>
-            <a href="/2018/03/22/hello-world/">Hello World</a>
           </li>
         
           <li>
