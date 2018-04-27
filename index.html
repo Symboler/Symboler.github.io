@@ -62,6 +62,620 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-css" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/27/css/" class="article-date">
+  <time datetime="2018-04-27T06:24:20.000Z" itemprop="datePublished">2018-04-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/27/css/">关于css，你应该知道的</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://github.com/kamranahmedse/developer-roadmap" target="_blank" rel="noopener">https://github.com/kamranahmedse/developer-roadmap</a></p>
+<h2 id="css预编译"><a href="#css预编译" class="headerlink" title="css预编译"></a>css预编译</h2><h3 id="sass"><a href="#sass" class="headerlink" title="sass"></a>sass</h3><h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><p>1、文件后缀名<br>.sass:不使用大括号和分号<br>.scss:和css格式接近，使用大括号和分号<br>    `</p>
+<pre><code>//文件后缀名为sass的语法
+body
+      background: #eee
+      font-size:12px
+p
+      background: #0982c1
+
+//文件后缀名为scss的语法
+body {
+      background: #eee;
+      font-size:12px;
+}
+p{
+      background: #0982c1;
+} `
+</code></pre><p>2、导入<br>通过@import来导入，导入的sass文件会被编程合并到一个css文件，但是如果在sass中导入css文件，效果和css的导入样式一样，会保留以@import形式存在。sass文件导入可以忽略后缀名。一般基础的文件命名方法以_开头，如_mixin.scssz。这种文件在导入的时候可以不写下划线，@import “mixin”。(顺便提一句，尽量少用css的@import因为它是在引用它的css文件下载下来以后，才会再去下载，用的多会严重影响浏览器并行加载css文件，影响页面渲染性能)<br>    `</p>
+<pre><code>//被导入的sass文件a.scss
+//-------------------------------
+body {
+      background: #eee;
+}
+//需要导入样式的sass文件b.scss
+@import &quot;reset.css&quot;;
+@import &quot;a&quot;;
+p{
+      background: #0982c1;
+}
+
+//转译出来的b.css样式
+@import &quot;reset.css&quot;;
+body {
+      background: #eee;
+}
+p{
+      background: #0982c1;
+}
+</code></pre><p> `<br>3、注释<br>多行注释：/**/<br>单行注释：// 单行注释不会被编译<br>4、变量<br>必须以$开头，后面紧跟变量名，变量名和变量值之间用：隔开，如果值后面加上！default则表示默认值。</p>
+<p>普通变量：定义之后可以在全局范围内使用<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+$fontSize: 12px;
+body{
+    font-size:$fontSize;
+}
+
+//css style
+//-------------------------------
+body{
+    font-size:12px;
+}`
+</code></pre><p>默认变量：仅需要在值后面加！default，一般是用来设置默认值，然后根据需求来覆盖的，覆盖的方式只要在默认变量之前重新声明下变量即可。<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+$baseLineHeight:        1.5 !default;
+body{
+    line-height: $baseLineHeight;
+}
+
+//css style
+//-------------------------------
+body{
+    line-height:1.5;
+}
+
+//sass style
+//-------------------------------
+$baseLineHeight:        2;
+$baseLineHeight:        1.5 !default;
+body{
+    line-height: $baseLineHeight;
+}
+
+//css style
+//-------------------------------
+body{
+    line-height:2;
+}`
+</code></pre><p>特殊变量：一般我们定义的变量都为属性值，可直接使用，但是如果变量作为属性或在某些特殊情况下等则必须要以#{$variables}形式使用。<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+$borderDirection:       top !default;
+$baseFontSize:          12px !default;
+$baseLineHeight:        1.5 !default;
+
+//应用于class和属性
+.border-#{$borderDirection}{
+      border-#{$borderDirection}:1px solid #ccc;
+}
+//应用于复杂的属性值
+body{
+    font:#{$baseFontSize}/#{$baseLineHeight};
+}
+
+//css style
+//-------------------------------
+.border-top{
+      border-top:1px solid #ccc;
+}
+body {
+      font: 12px/1.5;
+}`
+</code></pre><p>多值变量：多值变量分为list和map类型，list类似js数组，map类似js对象</p>
+<p>list数据可通过空格，逗号或小括号分隔多个值，可用nth($var,$index)取值。关于list数据操作还有很多其他函数如length($list),join($list1,$list2,[$separator]),append($list,$value,[$separator])等<br>    `</p>
+<pre><code>//定义一维数据
+$px: 5px 10px 20px 30px;
+
+//二维数据，相当于js中的二维数组
+$px: 5px 10px, 20px 30px;
+$px: (5px 10px) (20px 30px);
+
+//使用
+//sass style
+//-------------------------------
+$linkColor:         #08c #333 !default;//第一个值为默认值，第二个鼠标滑过值
+a{
+      color:nth($linkColor,1);
+
+      &amp;:hover{
+        color:nth($linkColor,2);
+      }
+}
+
+//css style
+//-------------------------------
+a{
+      color:#08c;
+}
+a:hover{
+      color:#333;
+}`
+</code></pre><p>map数据以key和value成对出现<br>    `</p>
+<pre><code>//定义
+$heading: (h1: 2em, h2: 1.5em, h3: 1.2em);
+
+//使用
+//sass style
+//-------------------------------
+$headings: (h1: 2em, h2: 1.5em, h3: 1.2em);
+@each $header, $size in $headings {
+      #{$header} {
+        font-size: $size;
+      }
+}
+
+//css style
+//-------------------------------
+h1 {
+      font-size: 2em;
+}
+h2 {
+      font-size: 1.5em;
+}
+h3 {
+      font-size: 1.2em;
+}
+</code></pre><p>`</p>
+<p>全局变量：在变量后面加！global现在用不上<br>目前的变量机制，在选择器中声明的变量会覆盖外面全局声明的变量（sass没有局部变量）</p>
+<p>5、嵌套<br>选择器嵌套和属性的嵌套</p>
+<p>选择器嵌套：我们最常用的方式<br>    `</p>
+<pre><code>#top_nav{
+      line-height: 40px;
+      text-transform: capitalize;
+      background-color:#333;
+      li{
+        float:left;
+      }
+      a{
+        display: block;
+        padding: 0 10px;
+        color: #fff;
+
+        &amp;:hover{
+              color:#ddd;
+        }
+      }
+}`
+</code></pre><p>属性嵌套：<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+.fakeshadow {
+      border: {
+        style: solid;
+        left: {
+              width: 4px;
+              color: #888;
+        }
+        right: {
+              width: 2px;
+              color: #ccc;
+        }
+      }
+}
+
+//css style
+//-------------------------------
+.fakeshadow {
+      border-style: solid;
+      border-left-width: 4px;
+      border-left-color: #888;
+      border-right-width: 2px;
+      border-right-color: #ccc;
+}`
+</code></pre><p>6、@at-root</p>
+<p>sass3.3.0中新增功能，用来跳出选择器嵌套的。默认所有的嵌套，继承所有上级选择器，但有了这个就可以跳出所有上级选择器。<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+//没有跳出
+.parent-1 {
+      color:#f00;
+      .child {
+        width:100px;
+      }
+}
+
+//单个选择器跳出
+.parent-2 {
+      color:#f00;
+      @at-root .child {
+        width:200px;
+      }
+}
+
+//多个选择器跳出
+.parent-3 {
+      background:#f00;
+      @at-root {
+        .child1 {
+              width:300px;
+        }
+        .child2 {
+              width:400px;
+        }
+      }
+}
+
+//css style
+//-------------------------------
+.parent-1 {
+      color: #f00;
+}
+.parent-1 .child {
+      width: 100px;
+}
+
+.parent-2 {
+      color: #f00;
+}
+.child {
+      width: 200px;
+}
+
+.parent-3 {
+      background: #f00;
+}
+.child1 {
+      width: 300px;
+}
+.child2 {
+      width: 400px;
+}`
+</code></pre><p>7、混合（mixin）</p>
+<p>sass中使用 @mixin声明混合，可以传递参数，参数名以$符号开始，多个参数以逗号分开，也可以给参数设置默认值。声明的 @mixin通过 @include来调用。<br>    `</p>
+<pre><code>//无参数mixin
+//sass style
+//-------------------------------
+@mixin center-block {
+    margin-left:auto;
+    margin-right:auto;
+}
+.demo{
+    @include center-block;
+}
+
+//css style
+//-------------------------------
+.demo{
+    margin-left:auto;
+    margin-right:auto;
+}
+
+//有参数mixin
+//sass style
+//-------------------------------
+@mixin opacity($opacity:50) {
+      opacity: $opacity / 100;
+      filter: alpha(opacity=$opacity);
+}
+
+//css style
+//-------------------------------
+.opacity{
+      @include opacity; //参数使用默认值
+}
+.opacity-80{
+      @include opacity(80); //传递参数
+}`
+</code></pre><p>8、继承</p>
+<p>sass中，选择器继承可以让选择器继承另一个选择器的所有样式，并联合声明。使用选择器的继承，要使用关键词 @extend，后面紧跟需要继承的选择器。</p>
+<pre><code>`
+
+//sass style
+//-------------------------------
+</code></pre><p>h1{<br>  border: 4px solid #ff9aa9;<br>}<br>.speaker{<br>  @extend h1;<br>  border-width: 2px;<br>}</p>
+<p>//css style<br>//——————————-<br>h1,.speaker{<br>  border: 4px solid #ff9aa9;<br>}<br>.speaker{<br>  border-width: 2px;<br>}`</p>
+<p>占位选择器 %<br>从sass 3.2.0以后就可以定义占位选择器 %。这种选择器的优势在于：如果不调用则不会有任何多余的css文件，避免了以前在一些基础的文件中预定义了很多基础的样式，然后实际应用中不管是否使用了 @extend去继承相应的样式，都会解析出来所有的样式。占位选择器以 %标识定义，通过 @extend调用。</p>
+<pre><code>`
+
+//sass style
+//-------------------------------
+%ir{
+      color: transparent;
+      text-shadow: none;
+      background-color: transparent;
+      border: 0;
+}
+%clearfix{
+      @if $lte7 {
+        *zoom: 1;
+      }
+      &amp;:before,
+      &amp;:after {
+        content: &quot;&quot;;
+        display: table;
+        font: 0/0 a;
+      }
+      &amp;:after {
+        clear: both;
+      }
+}
+#header{
+      h1{
+        @extend %ir;
+        width:300px;
+      }
+}
+.ir{
+      @extend %ir;
+}
+
+//css style
+//-------------------------------
+#header h1,
+    .ir{
+          color: transparent;
+          text-shadow: none;
+          background-color: transparent;
+          border: 0;
+}
+#header h1{
+      width:300px;
+}`
+</code></pre><p>9、函数<br>sass定义了很多函数可供使用，当然你也可以自己定义函数，以@fuction开始，实际项目中我们使用最多的应该是颜色函数，而颜色函数中又以lighten减淡和darken加深为最，其调用方法为 lighten($color,$amount)和 darken($color,$amount)，它们的第一个参数都是颜色值，第二个参数都是百分比。</p>
+<p>10、运算<br>sass具有运算的特性，可以对数值型的Value(如：数字、颜色、变量等)进行加减乘除四则运算。请注意运算符前后请留一个空格，不然会出错。<br>    `</p>
+<pre><code>$baseFontSize:          14px !default;
+$baseLineHeight:        1.5 !default;
+$baseGap:               $baseFontSize * $baseLineHeight !default;
+$halfBaseGap:           $baseGap / 2  !default;
+$samllFontSize:         $baseFontSize - 2px  !default;
+
+//grid
+$_columns:                     12 !default;      // Total number of columns
+$_column-width:                60px !default;   // Width of a single column
+$_gutter:                      20px !default;     // Width of the gutter
+$_gridsystem-width:            $_columns * ($_column-width + $_gutter); //grid system width`
+</code></pre><p>11、条件判断及循环<br>@if判断<br>@if可一个条件单独使用，也可以和 @else结合多条件使用<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+$lte7: true;
+$type: monster;
+.ib{
+    display:inline-block;
+    @if $lte7 {
+        *display:inline;
+        *zoom:1;
+    }
+}
+p {
+      @if $type == ocean {
+        color: blue;
+      } @else if $type == matador {
+        color: red;
+      } @else if $type == monster {
+        color: green;
+      } @else {
+        color: black;
+      }
+}
+
+//css style
+//-------------------------------
+.ib{
+    display:inline-block;
+    *display:inline;
+    *zoom:1;
+}
+p {
+      color: green;
+}`
+</code></pre><p>三目判断<br>语法为： if($condition, $if_true, $if_false) 。三个参数分别表示：条件，条件为真的值，条件为假的值。<br>    `</p>
+<pre><code>if(true, 1px, 2px) =&gt; 1px
+if(false, 1px, 2px) =&gt; 2px`
+</code></pre><p>for循环<br>for循环有两种形式，分别为： @for $var from <start> through <end>和 @for $var from <start> to <end>。$i表示变量，start表示起始值，end表示结束值，这两个的区别是关键字through表示包括end这个数，而to则不包括end这个数。<br>    `</end></start></end></start></p>
+<pre><code>//sass style
+//-------------------------------
+@for $i from 1 through 3 {
+      .item-#{$i} { width: 2em * $i; }
+}
+
+//css style
+//-------------------------------
+.item-1 {
+      width: 2em;
+}
+.item-2 {
+      width: 4em;
+}
+.item-3 {
+      width: 6em;
+}`
+</code></pre><p>@each循环<br>语法为： @each $var in <list or="" map="">。其中 $var表示变量，而list和map表示list类型数据和map类型数据。sass 3.3.0新加入了多字段循环和map数据循环。</list></p>
+<p>单个字段list数据循环<br>    `</p>
+<pre><code>//sass style
+//-------------------------------
+$animal-list: puma, sea-slug, egret, salamander;
+@each $animal in $animal-list {
+      .#{$animal}-icon {
+        background-image: url(&apos;/images/#{$animal}.png&apos;);
+      }
+}
+
+//css style
+//-------------------------------
+.puma-icon {
+      background-image: url(&apos;/images/puma.png&apos;);
+}
+.sea-slug-icon {
+      background-image: url(&apos;/images/sea-slug.png&apos;);
+}
+.egret-icon {
+      background-image: url(&apos;/images/egret.png&apos;);
+}
+.salamander-icon {
+      background-image: url(&apos;/images/salamander.png&apos;);
+}`
+</code></pre><h2 id="less和sass的区别"><a href="#less和sass的区别" class="headerlink" title="less和sass的区别"></a>less和sass的区别</h2><p>1.编译环境不一样<br>Sass的安装需要Ruby环境，是在服务端处理的，而Less是需要引入less.js来处理Less代码输出css到浏览器，也可以在开发环节使用Less，然后编译成css文件，直接放到项目中，也有 Less.app、SimpleLess、CodeKit.app这样的工具，也有在线编译地址。</p>
+<p>2.变量符不一样，Less是@，而Scss是$，而且变量的作用域也不一样。<br>3.输出设置，Less没有输出设置，Sass提供4中输出选项：nested, compact, compressed 和 expanded。<br>输出样式的风格可以有四种选择，默认为nested</p>
+<p>nested：嵌套缩进的css代码<br>expanded：展开的多行css代码<br>compact：简洁格式的css代码<br>compressed：压缩后的css代码</p>
+<p>4.Sass支持条件语句，可以使用if{}else{},for{}循环等等。而Less不支持。</p>
+<ol start="5">
+<li>引用外部CSS文件<br>scss引用的外部文件命名必须以_开头, 如下例所示:其中_test1.scss、_test2.scss、<em>test3.scss文件分别设置的h1 h2 h3。文件名如果以下划线</em>开头的话，Sass会认为该文件是一个引用文件，不会将其编译为css文件.<br>6.Sass和Less的工具库不同</li>
+</ol>
+<p>相同点：两者都是CSS预处理器，都具有相同的功能，可以帮助我们快速编译代码，帮助我们更好的维护我们的样式代码或者说维护项目吧。不同点：语法规则不同，当然功能或许略有差别<br>选择Sass的原因：<br>1、Sass也是成熟的CSS预处理器之一，而且有一个稳定，强大的团队在维护<br>2、Sass对于我来说参考的教程多<br>3、Sass有一些成熟稳定的框架，特别是Compass，新秀还有Foundation之类<br>4、还有一个原因是国外讨论Sass的同行要多于LESS</p>
+<h3 id="比较sass、less、stylus"><a href="#比较sass、less、stylus" class="headerlink" title="比较sass、less、stylus"></a>比较sass、less、stylus</h3><p>1、变量：就像其他编程语言一样，免于多处修改。</p>
+<p>Sass：使用「$」对变量进行声明，变量名和变量值使用冒号进行分割<br>Less：使用「@」对变量进行声明<br>Stylus：中声明变量没有任何限定，结尾的分号可有可无，但变量名和变量值之间必须要有『等号』。但需要注意的是，如果用“@”符号来声明变量，Stylus会进行编译，但不会赋值给变量。就是说，Stylus 不要使用『@』声明变量。Stylus 调用变量的方法和Less、Sass完全相同。</p>
+<p>2、作用域：有了变量，就必须得有作用域进行管理。就想js一样，它会从局部作用域开始往上查找变量。</p>
+<p>Sass：它的方式是三者中最差的，不存在全局变量的概念<br>Less：它的方式和js比较相似，逐级往上查找变量<br>Stylus：它的方式和Less比较相似，但是它和Sass一样更倾向于指令式查找</p>
+<p>3、嵌套：对于css来说，有嵌套的写法无疑是完美的，更像是父子层级之间明确关系</p>
+<p>三者在这处的处理都是一样的，使用「&amp;」表示父元素</p>
+<h2 id="postcss"><a href="#postcss" class="headerlink" title="postcss"></a>postcss</h2><p>对于css命名冲突的问题，由来已久，可以说我们前端开发人员，天天在苦思冥想，如何去优雅的解决这些问题。css并未像js一样出现了AMD、CMD和ES6 Module的模块化方案。</p>
+<p>那么，回到问题，如何去解决呢？我们的前人也有提出过不同的方案：</p>
+<p>Object-Oriented CSS<br>BEM<br>SMACSS<br>方案可以说是层出不穷，不乏有团队内部的解决方案。但是大多数都是一个共同点——为选择器增加前缀。写出来的class很长很复杂。<br>现在的网页开发，讲究的是组件化的思想，因此，急需要可行的css Module方式来完成网页组件的开发。自从2015年开始，国外就流行了CSS-in-JS(典型的代表，react的styled-components)，还有一种就是CSS Module。<br>对于css，大家都知道，它是一门描述类语言，并不存在动态性。那么，要如何去形成module呢。我们可以先来看一个react使用postcss的例子：<br>    `</p>
+<pre><code>//example.css
+
+.article {
+    font-size: 14px;
+}
+.title {
+    font-size: 20px;
+}`
+</code></pre><p>之后，将这些命名打乱<br>    `</p>
+<pre><code>.zxcvb{
+    font-size: 14px;
+}
+.zxcva{
+    font-size: 20px;
+}`
+</code></pre><p>将之命名对应的内容，放入到json文件中去<br>    `</p>
+<pre><code>{
+    &quot;article&quot;: &quot;zxcvb&quot;,
+    &quot;title&quot;: &quot;zxcva&quot;
+}`
+</code></pre><p>之后，在js文件中运用<br>    `</p>
+<pre><code>import style from &apos;style.json&apos;;
+
+class Example extends Component{
+    render() {
+        return (
+            &lt;div classname={style.article}&gt;
+                &lt;div classname={style.title}&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        )
+    }
+}`
+</code></pre><p>这样子，就描绘出了一副css module的原型。当然，我们不可能每次都需要手动去写这些东西。我们需要自动化的插件帮助我们完成这一个过程。之后，我们应该先来了解一下postCSS。<br>PostCSS是什么？或许，你会认为它是预处理器、或者后处理器等等。其实，它什么都不是。它可以理解为一种插件系统。<br>你可以在使用预处理器的情况下使用它，也可以在原生的css中使用它。它都是支持的，并且它具备着一个庞大的生态系统，例如你可能常用的Autoprefixer，就是PostCSS的一个非常受欢迎的插件，被Google, Shopify, Twitter, Bootstrap和CodePen等公司广泛使用。<br>接下来，我们来看一下PostCSS的配置：</p>
+<p>这里我们使用webpack+postcss+postcss-loader+cssnext+postcss-import的组合。<br>    `</p>
+<pre><code>yarn add --dev webpack extract-text-webpack-plugin css-loader file-loader postcss postcss-loader postcss-cssnext postcss-import`
+</code></pre><p>然后，我们配置一下webpack.config.js：<br>    `</p>
+<pre><code>const webpack = require(&apos;webpack&apos;);
+const path = require(&apos;path&apos;);
+const ExtractTextPlugin = require(&apos;extract-text-webpack-plugin&apos;);
+module.exports = {
+      context: path.resolve(__dirname, &apos;src&apos;),
+      entry: {
+        app: &apos;./app.js&apos;;
+      },
+      module: {
+        loaders: [
+              {
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract({
+                      use: [
+                        {
+                              loader: &apos;css-loader&apos;,
+                              options: { importLoaders: 1 },
+                        },
+                        &apos;postcss-loader&apos;,
+                      ],
+                }),
+              },
+        ],
+      },
+      output: {
+        path: path.resolve(__dirname, &apos;dist/assets&apos;),
+      },
+      plugins: [
+        new ExtractTextPlugin(&apos;[name].bundle.css&apos;),
+      ],
+};`
+</code></pre><p>然后在根目录下配置postcss.config.js<br>    `</p>
+<pre><code>module.exports = {
+      plugins: {
+        &apos;postcss-import&apos;: {},
+        &apos;postcss-cssnext&apos;: {
+              browsers: [&apos;last 2 versions&apos;, &apos;&gt; 5%&apos;],
+        },
+      },
+};`
+</code></pre><p>之后，就可以在开发中使用cssnext的特性了<br>    `</p>
+<pre><code>/* Shared */
+@import &quot;shared/colors.css&quot;;
+@import &quot;shared/typography.css&quot;;
+/* Components */
+@import &quot;components/Article.css&quot;;
+
+
+/* shared/colors.css */
+:root {
+      --color-black: rgb(0,0,0);
+      --color-blue: #32c7ff;
+}
+
+/* shared/typography.css */
+:root {
+      --font-text: &quot;FF DIN&quot;, sans-serif;
+      --font-weight: 300;
+      --line-height: 1.5;
+}
+
+/* components/Article.css */
+.article {
+      font-size: 14px;
+      &amp; a {
+        color: var(--color-blue);
+      }
+      &amp; p {
+        color: var(--color-black);
+        font-family: var(--font-text);
+        font-weight: var(--font-weight);
+        line-height: var(--line-height);
+      }
+      @media (width &gt; 600px) {
+        max-width: 30em;
+      }
+}`
+</code></pre><p>个人感觉css module是比较好的处理css打包的解决方案，给我们开发带来很大的便利，结合sass等css预处理，高效的完成开发工作。</p>
+<p>另外关于css结构可以关注一下下面几个关键词</p>
+<h3 id="BEM、OOCSS、SMACSS、SUITCSS、Atomic"><a href="#BEM、OOCSS、SMACSS、SUITCSS、Atomic" class="headerlink" title="BEM、OOCSS、SMACSS、SUITCSS、Atomic"></a>BEM、OOCSS、SMACSS、SUITCSS、Atomic</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/27/css/" data-id="cjghknvxa0000n4vwfcwmygw7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redux" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/04/25/redux/" class="article-date">
@@ -378,7 +992,7 @@ sagaMiddleware.run(mySaga)
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/25/redux/" data-id="cjgevausa0003e0vwyulgf11f" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/25/redux/" data-id="cjghknvxs0005n4vw9n6d961i" class="article-share-link">Share</a>
       
       
     </footer>
@@ -954,7 +1568,7 @@ SearchPanel = Form.create({})(SearchPanel);
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/24/reta/" data-id="cjgevausf0005e0vw833nh99i" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/24/reta/" data-id="cjghknvxt0006n4vwu1yex92q" class="article-share-link">Share</a>
       
       
     </footer>
@@ -999,7 +1613,7 @@ SearchPanel = Form.create({})(SearchPanel);
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/18/hello-world/" data-id="cjgevaus90002e0vwbj0w0fd9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/18/hello-world/" data-id="cjghknvxn0003n4vweqrq88ir" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1238,7 +1852,7 @@ ulNode.addEventListener(&apos;click&apos;, function (e) {
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/17/alipay-questiones/" data-id="cjgevaurx0000e0vwocm5koj9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/17/alipay-questiones/" data-id="cjghknvxh0001n4vwtia1d65u" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1289,7 +1903,7 @@ ulNode.addEventListener(&apos;click&apos;, function (e) {
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjgevausc0004e0vw1opfwejv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/15/js-kuayu/" data-id="cjghknvxp0004n4vwtiujg2ss" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1738,7 +2352,7 @@ export default function ({
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjgevaus40001e0vw8685ipc7" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/03/22/first/" data-id="cjghknvxm0002n4vwg6kian4w" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1778,6 +2392,10 @@ export default function ({
       <ul>
         
           <li>
+            <a href="/2018/04/27/css/">关于css，你应该知道的</a>
+          </li>
+        
+          <li>
             <a href="/2018/04/25/redux/">flux-&gt;redux-&gt;redux-saga-&gt;dva说明</a>
           </li>
         
@@ -1791,10 +2409,6 @@ export default function ({
         
           <li>
             <a href="/2018/04/17/alipay-questiones/">阿里2018面试题总结</a>
-          </li>
-        
-          <li>
-            <a href="/2018/04/15/js-kuayu/">ajax跨域</a>
           </li>
         
       </ul>
